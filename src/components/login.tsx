@@ -11,9 +11,11 @@ import {
 import { config } from "../config/config";
 
 import { Redirect } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Login() {
+  const [redirectNickname, setRedirectNickName] = useState(false);
+
   var provider = new firebase.auth.GoogleAuthProvider();
   firebase.auth().languageCode = "en";
 
@@ -23,7 +25,7 @@ export default function Login() {
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then((result) => {
+      .then(async (result) => {
         /** @type {firebase.auth.OAuthCredential} */
         var credential = result.credential;
 
@@ -31,17 +33,24 @@ export default function Login() {
         //var token = credential.accessToken;
         // The signed-in user info.
         var { uid, email, displayName, photoURL } = result.user;
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ uid, email, displayName, photoURL })
-        );
 
-        firebase.firestore().collection("users").doc(uid).set({
-          uid,
-          email,
-          displayName,
-          photoURL,
-        });
+        const response = await firebase
+          .firestore()
+          .collection("users")
+          .doc(uid)
+          .get();
+
+        if (response.exists) {
+          firebase.firestore().collection("users").doc(uid).set({
+            uid,
+            email,
+            displayName,
+            photoURL,
+          });
+        } else {
+          setRedirectNickName(true);
+        }
+
         // ...
       })
       .catch((error) => {
@@ -58,7 +67,7 @@ export default function Login() {
   return (
     <div>
       <h2>Login</h2>
-      {localStorage.getItem("user") ? <Redirect to="/dashboard" /> : <br />}
+      {redirectNickname ? <Redirect to="/nickname" /> : <br />}
       <button onClick={handleClick}>Login con Google</button>
     </div>
   );

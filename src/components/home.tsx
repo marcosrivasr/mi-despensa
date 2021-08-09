@@ -14,7 +14,8 @@ export default function Home() {
           {({ providerId, user }) => {
             return (
               <div>
-                You are authenticated with {providerId} {user.displayName}
+                You are authenticated with {providerId} {user.uid}{" "}
+                {JSON.stringify(user)}
               </div>
             );
           }}

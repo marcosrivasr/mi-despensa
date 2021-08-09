@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import firebase from "firebase/app";
 import "firebase/auth";
+import "firebase/firestore";
 import {
   FirebaseAuthProvider,
   FirebaseAuthConsumer,
@@ -10,58 +11,55 @@ import {
 import { config } from "../config/config";
 
 import { Redirect } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function Login() {
+  var provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().languageCode = "en";
+
+  useEffect(() => {}, []);
+
+  function handleClick() {
+    firebase
+      .auth()
+      .signInWithPopup(provider)
+      .then((result) => {
+        /** @type {firebase.auth.OAuthCredential} */
+        var credential = result.credential;
+
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        //var token = credential.accessToken;
+        // The signed-in user info.
+        var { uid, email, displayName, photoURL } = result.user;
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ uid, email, displayName, photoURL })
+        );
+
+        firebase.firestore().collection("users").doc(uid).set({
+          uid,
+          email,
+          displayName,
+          photoURL,
+        });
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        // ...
+      });
+  }
   return (
     <div>
       <h2>Login</h2>
-      <Link to="/home">Home</Link> {}
-      <Link to="/dashboard">Dashboard</Link>
-      <FirebaseAuthProvider {...config} firebase={firebase}>
-        <button
-          onClick={() => {
-            const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
-            firebase.auth().signInWithPopup(googleAuthProvider);
-          }}
-        >
-          Sign In with Google
-        </button>
-
-        <button
-          onClick={() => {
-            const facebookAuthProvider =
-              new firebase.auth.FacebookAuthProvider();
-            firebase.auth().signInWithPopup(facebookAuthProvider);
-          }}
-        >
-          Sign In with Facebook
-        </button>
-
-        <FirebaseAuthConsumer>
-          {({ isSignedIn, user, providerId }) => {
-            return (
-              <pre style={{ height: 300, overflow: "auto" }}>
-                {JSON.stringify({ isSignedIn, user, providerId }, null, 2)}
-              </pre>
-            );
-          }}
-        </FirebaseAuthConsumer>
-        <div>
-          <IfFirebaseAuthed>
-            {() => {
-              return <Redirect to="/dashboard" />;
-            }}
-          </IfFirebaseAuthed>
-
-          <IfFirebaseAuthedAnd
-            filter={({ providerId }) => providerId !== "anonymous"}
-          >
-            {({ providerId }) => {
-              return <div>You are authenticated with {providerId}</div>;
-            }}
-          </IfFirebaseAuthedAnd>
-        </div>
-      </FirebaseAuthProvider>
+      {localStorage.getItem("user") ? <Redirect to="/dashboard" /> : <br />}
+      <button onClick={handleClick}>Login con Google</button>
     </div>
   );
 }

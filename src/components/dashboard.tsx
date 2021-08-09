@@ -1,6 +1,7 @@
 import "firebase/auth";
 import { IfFirebaseAuthedAnd } from "@react-firebase/auth";
 import "firebase/firestore";
+import { Redirect } from "react-router-dom";
 
 import {
   FirestoreProvider,
@@ -11,30 +12,32 @@ import { config } from "../config/config";
 import firebase from "firebase/app";
 import { useState } from "react";
 
+import { DataState } from "../types/dataState";
+
 export default function Dashboard() {
-  const [items, setItems] = useState("");
+  const [isUserSigned, setIsUserSigned] = useState<DataState>(DataState.None);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+      var uid = user.uid;
+      setCurrentUser(user);
+      setIsUserSigned(DataState.Completed);
+      // ...
+    } else {
+      setIsUserSigned(DataState.Error);
+      // User is signed out
+      // ...
+    }
+  });
 
   function getDisplayName() {
     return (
-      <IfFirebaseAuthedAnd
-        filter={({ providerId }) => providerId !== "anonymous"}
-      >
-        {({ user }) => {
-          return <span>{user.displayName}</span>;
-        }}
-      </IfFirebaseAuthedAnd>
-    );
-  }
-
-  function getDataItems() {
-    return (
-      <FirestoreProvider {...config} firebase={firebase}>
-        <FirestoreDocument path="/users/1">
-          {(d) => {
-            return d.isLoading ? "Loading" : <pre>{d.value?.name}</pre>;
-          }}
-        </FirestoreDocument>
-      </FirestoreProvider>
+      <span>
+        {currentUser?.displayName} <img src={currentUser?.photoURL} />
+      </span>
     );
   }
 
@@ -43,11 +46,10 @@ export default function Dashboard() {
       <FirestoreProvider {...config} firebase={firebase}>
         <FirestoreCollection path="/users/">
           {(d) => {
-            console.log(d.value);
             return d.isLoading
               ? "Loading"
               : d.value.map((item) => {
-                  return <div>{item.name}</div>;
+                  return <div>{item.displayName}</div>;
                 });
           }}
         </FirestoreCollection>
@@ -55,10 +57,25 @@ export default function Dashboard() {
     );
   }
 
+  function UserLoggedIn() {
+    return <div>Logueado</div>;
+  }
+
+  function UserNotLoggedIn() {
+    return <Redirect to="/home" />;
+  }
+
   return (
     <div>
-      <h2>Bienvenido {getDisplayName()}</h2>
-      {/* getDataItems() */}
+      {isUserSigned === DataState.Completed ? (
+        <UserLoggedIn />
+      ) : isUserSigned === DataState.Error ? (
+        <UserNotLoggedIn />
+      ) : (
+        ""
+      )}
+
+      <h1>{getDisplayName()}</h1>
       {getDataCollections()}
     </div>
   );

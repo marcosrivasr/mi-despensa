@@ -10,6 +10,7 @@ import { config } from "./config/config";
 import Header from "./components/header";
 import { headerDataItems } from "./data/headerItems";
 import Logout from "./components/logout";
+import Nickname from "./components/nickname";
 import {
   FirestoreProvider,
   FirestoreDocument,
@@ -33,6 +34,9 @@ export const App = () => {
             </Route>
             <Route path="/logout">
               <Logout />
+            </Route>
+            <Route path="/nickname">
+              <Nickname />
             </Route>
           </Switch>
         </BrowserRouter>

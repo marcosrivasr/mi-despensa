@@ -1,6 +1,6 @@
 import "firebase/auth";
-import { IfFirebaseAuthedAnd } from "@react-firebase/auth";
 import "firebase/firestore";
+import { IfFirebaseAuthedAnd } from "@react-firebase/auth";
 import { Redirect } from "react-router-dom";
 
 import {

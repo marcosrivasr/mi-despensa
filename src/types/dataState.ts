@@ -4,3 +4,11 @@ export enum DataState {
   Completed,
   Error,
 }
+
+export enum LoginState {
+  None,
+  UserIsRegistered,
+  UsernameAvailable,
+  UsernameTaken,
+  LoginCompleted,
+}

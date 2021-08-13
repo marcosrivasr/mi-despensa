@@ -1,39 +1,49 @@
+import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import { IfFirebaseAuthedAnd } from "@react-firebase/auth";
-import { Redirect } from "react-router-dom";
-
-import {
-  FirestoreProvider,
-  FirestoreDocument,
-  FirestoreCollection,
-} from "@react-firebase/firestore";
+import { Redirect, Link } from "react-router-dom";
 import { config } from "../config/config";
-import firebase from "firebase/app";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 
 import { DataState } from "../types/dataState";
+
+const NewListView = lazy(() => import("./newListView"));
 
 export default function Dashboard() {
   const [isUserSigned, setIsUserSigned] = useState<DataState>(DataState.None);
   const [currentUser, setCurrentUser] = useState(null);
+  const [showNewListView, setshowNewListView] = useState(false);
+  const db = firebase.firestore();
+  const auth = firebase.auth();
+
+  const [lists, setLists] = useState([]);
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
-        var uid = user.uid;
         setCurrentUser(user);
         setIsUserSigned(DataState.Completed);
-        // ...
+
+        db.collection("shopping_lists")
+          .where("ownerid", "==", user.uid)
+          .get()
+          .then((data) => {
+            let dataLists = [];
+            data.forEach((item) => {
+              dataLists.push(item.data());
+            });
+            setLists(dataLists);
+          });
       } else {
         setIsUserSigned(DataState.Error);
         // User is signed out
         // ...
       }
     });
-  });
+  }, []);
 
   function getDisplayName() {
     return (
@@ -47,24 +57,7 @@ export default function Dashboard() {
   }
 
   function getDataCollections() {
-    return (
-      <FirestoreProvider {...config} firebase={firebase}>
-        <FirestoreCollection path="/shopping_lists/">
-          {(d) => {
-            return d.isLoading
-              ? "Loading"
-              : d.value.map((item) => {
-                  return (
-                    <div>
-                      {item.title} <button>Editar lista</button>
-                      <button>Eliminar lista</button>
-                    </div>
-                  );
-                });
-          }}
-        </FirestoreCollection>
-      </FirestoreProvider>
-    );
+    return <div>Lista</div>;
   }
 
   function UserLoggedIn() {
@@ -76,23 +69,30 @@ export default function Dashboard() {
     );
   }
 
-  function UserNotLoggedIn() {
-    return <Redirect to="/home" />;
-  }
-
-  function renderUI() {
-    switch (isUserSigned) {
-      case DataState.Completed:
-        return <UserLoggedIn />;
-      case DataState.Error:
-        return <UserLoggedIn />;
-    }
+  function onHandleShouldCloseViewPane(state) {
+    setshowNewListView(state);
   }
 
   return (
     <div>
-      {renderUI()}
-      {getDataCollections()}
+      <button onClick={(e) => setshowNewListView(true)}>
+        Crear nueva lista
+      </button>
+      {lists.map((list) => {
+        return (
+          <div key={list.id}>
+            <Link to={`/list/${list.id}`}>{list.title}</Link>
+          </div>
+        );
+      })}
+
+      {showNewListView ? (
+        <Suspense fallback={<div>Loading...</div>}>
+          <NewListView shouldCloseViewPane={onHandleShouldCloseViewPane} />
+        </Suspense>
+      ) : (
+        ""
+      )}
     </div>
   );
 }

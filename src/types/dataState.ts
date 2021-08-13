@@ -12,3 +12,20 @@ export enum LoginState {
   UsernameTaken,
   LoginCompleted,
 }
+
+export interface IListDetails {
+  id: string;
+  ownerid: string;
+  title: string;
+  users: string[];
+  items: IItemDetails[];
+}
+
+export interface IItemDetails {
+  productid: string;
+  title: string;
+  price?: number;
+  day: number;
+  startdate: Date;
+  frequency: number;
+}

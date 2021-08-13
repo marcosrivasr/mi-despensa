@@ -15,6 +15,7 @@ import {
   FirestoreProvider,
   FirestoreDocument,
 } from "@react-firebase/firestore";
+import ListView from "./components/listView";
 
 export const App = () => {
   return (
@@ -38,6 +39,7 @@ export const App = () => {
             <Route path="/nickname">
               <Nickname />
             </Route>
+            <Route path="/list/:id" component={ListView}></Route>
           </Switch>
         </BrowserRouter>
       </FirebaseAuthProvider>

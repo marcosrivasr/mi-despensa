@@ -1,0 +1,43 @@
+input,
+select {
+  padding: 5px;
+  border: solid 3px #ddd;
+  border-radius: 5px;
+  outline: none;
+  margin: 5px 0;
+
+  &:focus {
+    border: solid 3px #74b9ff;
+  }
+}
+
+button {
+  /* border-radius: 5px;
+  padding: 10px 15px;
+  border: solid 3px #ddd;
+  background-color: transparent;
+  margin: 5px 5px 5px 0;
+  outline: none;
+
+  &:hover {
+    background-color: #eee;
+  }
+
+  &:focus {
+    border: solid 3px #74b9ff;
+  }
+
+  &.primary {
+    background-color: #287dd3;
+    color: white;
+  }
+
+  &.secondary {
+    background-color: #287dd3;
+    color: white;
+  } */
+}
+
+label {
+  display: block;
+}

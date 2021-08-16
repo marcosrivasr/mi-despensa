@@ -1,3 +1,4 @@
+import "./global.scss";
 import Home from "./components/home";
 import Dashboard from "./components/dashboard";
 import { BrowserRouter, Route, Switch } from "react-router-dom";

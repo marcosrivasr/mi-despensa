@@ -20,7 +20,7 @@ export default function NewListItemViewPane({
 
   async function handleClickAddItem(e) {
     const productid = uuidv4();
-    const startdate = new Date();
+    const startdate = Date.now();
     const updatedItem: IItemDetails = {
       productid,
       title,
@@ -28,6 +28,7 @@ export default function NewListItemViewPane({
       day,
       frequency,
       startdate,
+      completed: false,
     };
 
     try {

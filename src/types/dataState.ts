@@ -26,6 +26,13 @@ export interface IItemDetails {
   title: string;
   price?: number;
   day: number;
-  startdate: Date;
+  startdate: number;
   frequency: number;
+  completed: boolean;
+}
+
+export interface IEntry {
+  id: string;
+  date: number;
+  lists: IListDetails[];
 }

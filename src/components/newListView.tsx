@@ -36,6 +36,7 @@ export default function NewListView({ shouldCloseViewPane }) {
         console.error(error);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function handleChangeSearchUser(e) {
@@ -44,6 +45,9 @@ export default function NewListView({ shouldCloseViewPane }) {
   }
 
   async function handleClickSearch(e) {
+    if (userText === "") {
+      return;
+    }
     setStatus("Buscando...");
     setUsersFound([]);
     let itemsFound = [];
@@ -89,7 +93,7 @@ export default function NewListView({ shouldCloseViewPane }) {
         users,
       };
       try {
-        const response = await db.collection("shopping_lists").add(newList);
+        await db.collection("shopping_lists").add(newList);
         //setGotoList(response.id);//este es el id de la colección
         setGotoList(id);
       } catch (error) {
@@ -118,6 +122,7 @@ export default function NewListView({ shouldCloseViewPane }) {
         {usersFound.map((user) => {
           return (
             <div key={user.displayName}>
+              <img src={user.photoURL} alt={user.displayName} width="32" />
               {user.displayName}
               {!usersAdded.includes(user) ? (
                 <button onClick={(e) => addUserFound(user)}>Añadir</button>

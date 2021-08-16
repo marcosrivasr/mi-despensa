@@ -2,6 +2,7 @@ import { useEffect, useState, lazy, Suspense } from "react";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import ShoppingItem from "./shoppingItem";
 const NewListItemViewPane = lazy(() => import("./newListItemViewPane"));
 
 export default function ListView({ match, location, history }) {
@@ -49,20 +50,22 @@ export default function ListView({ match, location, history }) {
             setCurrentDoc(doc.id);
             items.push(doc.data());
           });
-          setListDetails([...items]);
           console.log("items", items, typeof items, Array.isArray(items));
+          setListDetails([...items]);
         }
       } catch (error) {
         console.error(error);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function showListItems() {
     return (
       <>
         {listDetails[0].items.map((item) => (
-          <div key={item.id}>{item.title}</div>
+          //<div key={item.id}>{item.title}</div>
+          <ShoppingItem item={item} mode="read" />
         ))}
       </>
     );
@@ -79,7 +82,6 @@ export default function ListView({ match, location, history }) {
   return (
     <div>
       <div>
-        <input />
         <button onClick={handleClickAddItem}>Añadir elemento</button>
       </div>
 

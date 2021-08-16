@@ -1,0 +1,31 @@
+.row {
+  font-size: 18px;
+  display: flex;
+  padding: 10px 0;
+  border-bottom: solid 1px #ddd;
+  align-items: center;
+  gap: 10px;
+
+  .row-container {
+    display: flex;
+    flex-direction: column;
+    .price {
+      font-weight: bolder;
+      display: flex;
+      gap: 5px;
+    }
+
+    .price::before {
+      content: "$";
+    }
+
+    .date {
+      display: flex;
+    }
+
+    .product-info {
+      display: flex;
+      gap: 10px;
+    }
+  }
+}

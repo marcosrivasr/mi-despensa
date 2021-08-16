@@ -60,22 +60,13 @@ export default function Dashboard() {
     return <div>Lista</div>;
   }
 
-  function UserLoggedIn() {
-    return (
-      <>
-        <h1>{getDisplayName()}</h1>
-        <button>Crear nueva lista</button>
-      </>
-    );
-  }
-
   function onHandleShouldCloseViewPane(state) {
     setshowNewListView(state);
   }
 
   return (
     <div>
-      <button onClick={(e) => setshowNewListView(true)}>
+      <button className="primary" onClick={(e) => setshowNewListView(true)}>
         Crear nueva lista
       </button>
       {lists.map((list) => {

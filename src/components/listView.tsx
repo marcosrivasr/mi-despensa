@@ -3,6 +3,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import ShoppingItem from "./shoppingItem";
+import PrimaryButton from "../ui-framework/primaryButton";
 const NewListItemViewPane = lazy(() => import("./newListItemViewPane"));
 
 export default function ListView({ match, location, history }) {
@@ -82,7 +83,7 @@ export default function ListView({ match, location, history }) {
   return (
     <div>
       <div>
-        <button onClick={handleClickAddItem}>Añadir elemento</button>
+        <PrimaryButton onClick={handleClickAddItem} value="Añadir elemento" />
       </div>
 
       <div>

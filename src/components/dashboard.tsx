@@ -7,6 +7,8 @@ import { config } from "../config/config";
 import { useEffect, useState, lazy, Suspense } from "react";
 
 import { DataState } from "../types/dataState";
+import PrimaryButton from "../ui-framework/primaryButton";
+import SquareItem from "./squareItem";
 
 const NewListView = lazy(() => import("./newListView"));
 
@@ -66,16 +68,29 @@ export default function Dashboard() {
 
   return (
     <div>
-      <button className="primary" onClick={(e) => setshowNewListView(true)}>
-        Crear nueva lista
-      </button>
-      {lists.map((list) => {
-        return (
-          <div key={list.id}>
-            <Link to={`/list/${list.id}`}>{list.title}</Link>
-          </div>
-        );
-      })}
+      <div className="dashboard-header">
+        <PrimaryButton
+          onClick={() => setshowNewListView(true)}
+          value="Crear una nueva lista"
+        />
+      </div>
+      <div
+        className="lists-container"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "20px",
+          paddingTop: "10px",
+        }}
+      >
+        {lists.map((list) => {
+          return (
+            <Link to={`/list/${list.id}`} style={{ textDecoration: "none" }}>
+              <SquareItem key={list.id} text={list.title} />
+            </Link>
+          );
+        })}
+      </div>
 
       {showNewListView ? (
         <Suspense fallback={<div>Loading...</div>}>

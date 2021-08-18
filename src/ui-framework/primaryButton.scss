@@ -1,0 +1,13 @@
+@import "./common.scss";
+
+.primaryButton {
+  @include commonButtons;
+  background-color: #2196f3;
+  font-size: 16px;
+  font-weight: bolder;
+  color: white;
+
+  &:hover {
+    background-color: #1976d2;
+  }
+}

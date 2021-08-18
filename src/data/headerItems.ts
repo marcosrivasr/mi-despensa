@@ -17,8 +17,8 @@ export const headerDataItems: HeaderProps = {
     },
     {
       id: "3",
-      title: "Dashboard",
-      goTo: "/dashboard",
+      title: "Listas",
+      goTo: "/lists",
     },
     {
       id: "2",

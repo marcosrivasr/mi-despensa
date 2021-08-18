@@ -23,25 +23,29 @@ export const App = () => {
     <div>
       <FirebaseAuthProvider {...config} firebase={firebase}>
         <BrowserRouter>
-          <Header {...headerDataItems} />
-          <Switch>
-            <Route path="/dashboard">
-              <Dashboard />
-            </Route>
-            <Route path="/home">
-              <Home />
-            </Route>
-            <Route path="/login">
-              <Login />
-            </Route>
-            <Route path="/logout">
-              <Logout />
-            </Route>
-            <Route path="/nickname">
-              <Nickname />
-            </Route>
-            <Route path="/list/:id" component={ListView}></Route>
-          </Switch>
+          <div id="main-container">
+            <Header {...headerDataItems} />
+            <div id="content-container">
+              <Switch>
+                <Route path="/lists">
+                  <Dashboard />
+                </Route>
+                <Route path="/home">
+                  <Home />
+                </Route>
+                <Route path="/login">
+                  <Login />
+                </Route>
+                <Route path="/logout">
+                  <Logout />
+                </Route>
+                <Route path="/nickname">
+                  <Nickname />
+                </Route>
+                <Route path="/list/:id" component={ListView}></Route>
+              </Switch>
+            </div>
+          </div>
         </BrowserRouter>
       </FirebaseAuthProvider>
     </div>

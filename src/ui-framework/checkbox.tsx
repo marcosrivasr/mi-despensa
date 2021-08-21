@@ -5,9 +5,10 @@ import "./checkbox.scss";
 
 interface CheckboxProps {
   checked?: boolean;
+  onChanged?: (checked: boolean) => void;
 }
 
-export default function Checkbox({ checked }: CheckboxProps) {
+export default function Checkbox({ checked, onChanged }: CheckboxProps) {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
 
   function assignClasses(...classes) {
@@ -19,6 +20,7 @@ export default function Checkbox({ checked }: CheckboxProps) {
 
   function handleClick(e) {
     setCheckboxChecked(!checkboxChecked);
+    onChanged(checkboxChecked);
   }
 
   return (

@@ -20,6 +20,7 @@ export interface IListDetails {
   users: string[];
   items: IItemDetails[];
   icon: string;
+  timestamp: number;
 }
 
 export interface IItemDetails {
@@ -30,6 +31,7 @@ export interface IItemDetails {
   startdate: number;
   frequency: number;
   completed: boolean;
+  timestamp: number;
 }
 
 export interface IEntry {

@@ -8,7 +8,7 @@ export const headerDataItems: HeaderProps = {
     {
       id: "0",
       title: "Home",
-      goTo: "/home",
+      goTo: "/",
     },
     {
       id: "1",

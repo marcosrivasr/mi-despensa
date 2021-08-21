@@ -1,7 +1,7 @@
 import "./viewPane.scss";
-export default function ViewPane({ children, shouldCloseViewPane }) {
+export default function ViewPane({ children, closePane }) {
   function handleClickClose() {
-    shouldCloseViewPane(false);
+    closePane();
   }
 
   return (

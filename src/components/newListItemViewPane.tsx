@@ -1,22 +1,40 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { useState } from "react";
-import { IItemDetails } from "../types/dataState";
+import { useEffect, useState } from "react";
+import { IItemDetails, IListDetails } from "../types/dataState";
 import ViewPane from "./viewPane";
 import { v4 as uuidv4 } from "uuid";
 
+interface NewListItemViewPaneProps {
+  showPane: boolean;
+  list: IListDetails;
+  itemid: string;
+  onClose: () => void;
+}
+
 export default function NewListItemViewPane({
-  shouldCloseViewPane,
+  showPane,
   list,
-  collectionId,
-}) {
+  itemid,
+  onClose,
+}: NewListItemViewPaneProps) {
+  const [show, setShow] = useState(showPane);
   const [title, setTitle] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [day, setDay] = useState<number>(0);
+  const [date, setDate] = useState<string>("");
   const [frequency, setFrequency] = useState<number>(0);
 
   const db = firebase.firestore();
   const auth = firebase.auth();
+
+  useEffect(() => {
+    const item: IItemDetails = list.items.find((i) => i.productid === itemid);
+    setTitle(item.title);
+    setPrice(item.price);
+    setDay(item.day);
+    setFrequency(item.frequency);
+  }, []);
 
   async function handleClickAddItem(e) {
     const productid = uuidv4();
@@ -29,6 +47,7 @@ export default function NewListItemViewPane({
       frequency,
       startdate,
       completed: false,
+      timestamp: Date.now(),
     };
 
     try {
@@ -39,16 +58,20 @@ export default function NewListItemViewPane({
 
       const response = await db
         .collection("shopping_lists")
-        .doc(collectionId)
+        .doc(list.id)
         .update(list);
 
-      shouldCloseViewPane(false);
+      setShow(false);
     } catch (error) {
       console.error(error);
     }
   }
+
+  function handleShow() {
+    onClose();
+  }
   return (
-    <ViewPane shouldCloseViewPane={shouldCloseViewPane}>
+    <ViewPane closePane={handleShow}>
       <h2>Agregar un elemento a la despensa</h2>
       <div>
         <label>Título</label>
@@ -67,14 +90,35 @@ export default function NewListItemViewPane({
 
         <label>Día de la semana</label>
         <select onChange={(e) => setDay(parseInt(e.target.value))}>
-          <option value="0">Domingo</option>
-          <option value="1">Lunes</option>
-          <option value="2">Martes</option>
-          <option value="3">Miercoles</option>
-          <option value="4">Jueves</option>
-          <option value="5">Viernes</option>
-          <option value="6">Sábado</option>
+          <option value="0" {...(day === 2 ? "yes" : "no")}>
+            Domingo
+          </option>
+          <option value="1" {...(day === 1 ? " selected" : "")}>
+            Lunes
+          </option>
+          <option value="2" {...(day === 2 ? " selected" : "")}>
+            Martes
+          </option>
+          <option value="3" {...(day === 3 ? "selected" : "")}>
+            Miercoles
+          </option>
+          <option value="4" {...(day === 4 ? "selected" : "")}>
+            Jueves
+          </option>
+          <option value="5" {...(day === 5 ? "selected" : "")}>
+            Viernes
+          </option>
+          <option value="6" {...(day === 6 ? "selected" : "")}>
+            Sábado
+          </option>
         </select>
+
+        <label>Fecha de inicio</label>
+        <input
+          type="date"
+          onChange={(e) => setDate(e.target.value)}
+          value={date}
+        />
 
         <label>Frecuencia (semanas)</label>
         <input
@@ -87,13 +131,4 @@ export default function NewListItemViewPane({
       </div>
     </ViewPane>
   );
-
-  /**
-   * productid: string;
-  title: string;
-  price?: number;
-  day: number;
-  startdate: Date;
-  frequency: number;
-   */
 }

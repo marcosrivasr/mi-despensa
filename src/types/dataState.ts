@@ -19,6 +19,7 @@ export interface IListDetails {
   title: string;
   users: string[];
   items: IItemDetails[];
+  icon: string;
 }
 
 export interface IItemDetails {

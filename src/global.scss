@@ -31,5 +31,8 @@ label {
 }
 
 #content-container {
+  box-sizing: border-box;
   padding: 20px;
+  width: 980px;
+  overflow: auto;
 }

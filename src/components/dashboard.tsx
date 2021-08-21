@@ -86,7 +86,7 @@ export default function Dashboard() {
         {lists.map((list) => {
           return (
             <Link to={`/list/${list.id}`} style={{ textDecoration: "none" }}>
-              <SquareItem key={list.id} text={list.title} />
+              <SquareItem key={list.id} text={list.title} emoji={list.icon} />
             </Link>
           );
         })}

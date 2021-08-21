@@ -15,15 +15,17 @@ import { IEntry } from "../types/dataState";
 
 export default function Home() {
   const [today, setToday] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        setCurrentUser(user);
+        getUserShoppingListForToday();
       } else {
       }
     });
 
-    getUserShoppingListForToday();
     async function getUserShoppingListForToday() {
       const currentUser = firebase.auth().currentUser;
       const entryId = currentUser.uid + "_" + getDate();
@@ -64,19 +66,22 @@ export default function Home() {
   return (
     <div>
       <h1>Home</h1>
-      {today.map((item) => {
-        return (
-          <div>
-            <h2>
-              {item.title} {item.items.length}
-            </h2>
-            {item.items.map((item: IItemDetails) => {
-              //return <ul>{item.title}</ul>;
-              return <ShoppingItem item={item} mode="active" />;
-            })}
-          </div>
-        );
-      })}
+      {today.length
+        ? today.map((list) => {
+            return (
+              <div>
+                <h2>
+                  {list.title} {list.lists?.length}
+                </h2>
+                {list.items.map((item: IItemDetails) => {
+                  return (
+                    <ShoppingItem item={item} mode="active" list={list.id} />
+                  );
+                })}
+              </div>
+            );
+          })
+        : ""}
     </div>
   );
 }

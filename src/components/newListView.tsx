@@ -6,10 +6,12 @@ import { v4 as uuidv4 } from "uuid";
 import "./newListView.scss";
 import { Redirect } from "react-router";
 import ViewPane from "./viewPane";
+import EmojiPicker from "../ui-framework/emojiPicker";
 
 export default function NewListView({ shouldCloseViewPane }) {
   const [title, setTitle] = useState("");
   const [userText, setUserText] = useState("");
+  const [emoji, setEmoji] = useState("");
   const [usersFound, setUsersFound] = useState([]);
   const [usersAdded, setUsersAdded] = useState([]);
   const [currentUsername, setCurrentUsername] = useState(null);
@@ -91,9 +93,12 @@ export default function NewListView({ shouldCloseViewPane }) {
         ownerid,
         items,
         users,
+        icon: emoji,
+        timestamp: Date.now(),
       };
       try {
-        await db.collection("shopping_lists").add(newList);
+        //await db.collection("shopping_lists").add(newList);
+        await db.collection("shopping_lists").doc(id).set(newList);
         //setGotoList(response.id);//este es el id de la colección
         setGotoList(id);
       } catch (error) {
@@ -108,8 +113,12 @@ export default function NewListView({ shouldCloseViewPane }) {
     setTitle(e.target.value);
   }
 
+  function handleEmojiPickerChanged(emoji) {
+    setEmoji(emoji);
+  }
+
   return (
-    <ViewPane shouldCloseViewPane={shouldCloseViewPane}>
+    <ViewPane closePane={shouldCloseViewPane}>
       {gotoList ? <Redirect to={`/list/${gotoList}`} /> : ""}
       <label>Nombre de lista</label>
       <input onChange={handleChangeTitle} value={title} />
@@ -140,6 +149,10 @@ export default function NewListView({ shouldCloseViewPane }) {
         {usersAdded.map((user) => {
           return <div key={user.uid}>{user.displayName}</div>;
         })}
+      </div>
+
+      <div>
+        <EmojiPicker onEmojiChange={handleEmojiPickerChanged} />
       </div>
 
       <button onClick={handleCreateList}>Crear lista</button>

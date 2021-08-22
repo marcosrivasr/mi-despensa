@@ -28,3 +28,16 @@
     border: none;
   }
 }
+
+@media screen and (max-width: 700px) {
+  form {
+    display: flex;
+    flex-direction: column;
+
+    input,
+    select {
+      border: none;
+      width: 100%;
+    }
+  }
+}

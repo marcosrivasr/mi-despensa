@@ -9,21 +9,25 @@ export const headerDataItems: HeaderProps = {
       id: "0",
       title: "Home",
       goTo: "/",
+      protected: true,
     },
     {
       id: "1",
       title: "Sign in",
       goTo: "/login",
+      protected: false,
     },
     {
       id: "3",
       title: "Listas",
       goTo: "/lists",
+      protected: true,
     },
     {
       id: "2",
       title: "Log out",
       goTo: "/logout",
+      protected: true,
     },
   ],
 };

@@ -15,17 +15,22 @@ import {
   completeItem,
 } from "../services/firestoreService";
 import { IEntry } from "../types/dataState";
+import { Redirect } from "react-router";
 
 export default function Home() {
   const [today, setToday] = useState<IEntry>(null);
   const [currentUser, setCurrentUser] = useState<firebase.User>(null);
+  const [logged, setLogged] = useState(null);
+
   let entry: IEntry;
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
+        setLogged(true);
         getUserShoppingListForToday(user);
       } else {
+        setLogged(false);
       }
     });
 
@@ -94,8 +99,11 @@ export default function Home() {
       console.error(error);
     }
   }
+
   return (
     <div>
+      {logged === null ? "Loading..." : ""}
+      {logged === false ? <Redirect to="/login" /> : ""}
       <h1>Home</h1>
       {currentUser && today && today.lists && today.lists.length
         ? today.lists.map((list) => {

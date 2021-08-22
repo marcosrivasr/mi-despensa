@@ -19,23 +19,32 @@ export default function Checkbox({ checked, onChanged }: CheckboxProps) {
   }
 
   function handleClick(e) {
-    setCheckboxChecked(!checkboxChecked);
-    onChanged(checkboxChecked);
+    const completed = !checkboxChecked;
+    setCheckboxChecked(completed);
+    onChanged(completed);
   }
 
   return (
     <>
       <button
-        className={assignClasses("checkbox", checkboxChecked ? "checked" : "")}
+        className={assignClasses(
+          "checkbox",
+          checked || checkboxChecked ? "checked" : ""
+        )}
         onClick={handleClick}
       >
         <FontAwesomeIcon
           className="fontawesome-icon"
           icon={faCheck}
-          style={{ color: "white", fontSize: "1.5em" }}
+          style={{ color: "white" }}
         />
       </button>
-      <input type="checkbox" checked={checked} hidden />
+      <input
+        type="checkbox"
+        checked={checked}
+        hidden
+        style={{ display: "none" }}
+      />
     </>
   );
 }

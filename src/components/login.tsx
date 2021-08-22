@@ -5,6 +5,8 @@ import "firebase/firestore";
 import { Redirect } from "react-router-dom";
 import { useState } from "react";
 
+import "./login.scss";
+
 export default function Login() {
   const [redirectNickname, setRedirectNickName] = useState(0);
 
@@ -45,17 +47,19 @@ export default function Login() {
   function renderUI() {
     switch (redirectNickname) {
       case 1:
-        return <Redirect to="/dashboard" />;
+        return <Redirect to="/home" />;
       case 2:
         return <Redirect to="/nickname" />;
     }
   }
 
   return (
-    <div>
-      <h2>Login {redirectNickname.toString()}</h2>
+    <div className="loginContainer">
+      <h2>Login</h2>
       {renderUI()}
-      <button onClick={handleClick}>Login con Google</button>
+      <button onClick={handleClick} className="btnGoogle">
+        Login con Google
+      </button>
     </div>
   );
 }

@@ -1,0 +1,18 @@
+.loginContainer {
+  text-align: center;
+  .btnGoogle {
+    font-size: 20px;
+    border: none;
+    background: none;
+    font-weight: 400;
+    border: solid 2px #1177dd;
+    border-radius: 8px;
+    padding: 20px 30px;
+    width: 400px;
+
+    &:hover {
+      background-color: #1177dd;
+      color: white;
+    }
+  }
+}

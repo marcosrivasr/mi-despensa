@@ -33,6 +33,9 @@ export const App = () => {
                 <Route exact path="/">
                   <Home />
                 </Route>
+                <Route exact path="/home">
+                  <Home />
+                </Route>
                 <Route path="/login">
                   <Login />
                 </Route>

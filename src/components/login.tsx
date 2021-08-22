@@ -55,11 +55,12 @@ export default function Login() {
 
   return (
     <div className="loginContainer">
-      <h2>Login</h2>
-      {renderUI()}
-      <button onClick={handleClick} className="btnGoogle">
-        Login con Google
-      </button>
+      <div className="form">
+        {renderUI()}
+        <button onClick={handleClick} className="btnGoogle">
+          Login con Google
+        </button>
+      </div>
     </div>
   );
 }

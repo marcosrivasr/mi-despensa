@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from "react";
-import { IItemDetails } from "../types/dataState";
+import { IItemDetails, IListDetails } from "../types/dataState";
 import Checkbox from "../ui-framework/checkbox";
 import { getDayOfTheWeekGivenANumber } from "../util/date";
 import firebase from "firebase/app";
@@ -12,17 +12,19 @@ interface shoppingItemProps {
   list: string;
   mode: "active" | "read";
   onEdit?: (id: string) => void;
+  onChanged?: (listId: string, item: IItemDetails, completed: boolean) => void;
 }
 export default function ShoppingItem({
   item,
   list,
   mode,
   onEdit,
+  onChanged,
 }: shoppingItemProps) {
   const d = new Date(item.startdate);
 
   function handleCheckboxChange(state) {
-    item.completed = state;
+    onChanged(list, item, state);
   }
 
   async function handleRemoveClick() {

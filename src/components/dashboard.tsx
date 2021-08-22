@@ -10,6 +10,8 @@ import { DataState } from "../types/dataState";
 import PrimaryButton from "../ui-framework/primaryButton";
 import SquareItem from "./squareItem";
 
+import "./listsView.scss";
+
 const NewListView = lazy(() => import("./newListView"));
 
 export default function Dashboard() {
@@ -74,15 +76,7 @@ export default function Dashboard() {
           value="Crear una nueva lista"
         />
       </div>
-      <div
-        className="lists-container"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: "20px",
-          paddingTop: "10px",
-        }}
-      >
+      <div className="listsContainer">
         {lists.map((list) => {
           return (
             <Link to={`/list/${list.id}`} style={{ textDecoration: "none" }}>

@@ -9,7 +9,7 @@ interface CheckboxProps {
 }
 
 export default function Checkbox({ checked, onChanged }: CheckboxProps) {
-  const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const [checkboxChecked, setCheckboxChecked] = useState(checked || false);
 
   function assignClasses(...classes) {
     return classes
@@ -27,10 +27,7 @@ export default function Checkbox({ checked, onChanged }: CheckboxProps) {
   return (
     <>
       <button
-        className={assignClasses(
-          "checkbox",
-          checked || checkboxChecked ? "checked" : ""
-        )}
+        className={assignClasses("checkbox", checkboxChecked ? "checked" : "")}
         onClick={handleClick}
       >
         <FontAwesomeIcon

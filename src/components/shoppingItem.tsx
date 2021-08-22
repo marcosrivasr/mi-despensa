@@ -52,6 +52,12 @@ export default function ShoppingItem({
     onEdit(item.productid);
   }
 
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+  });
+
   return (
     <div className="row">
       {mode === "active" ? (
@@ -60,10 +66,6 @@ export default function ShoppingItem({
       <div className="row-container">
         <div className="product-info">
           <div>{item.title}</div>
-          <div className="price">
-            {item.price}{" "}
-            {mode === "active" ? <button>Modificar costo</button> : ""}
-          </div>
         </div>
         <div className="date">
           <div>
@@ -72,6 +74,7 @@ export default function ShoppingItem({
           </div>
         </div>
       </div>
+      <div className="price">{formatter.format(item.price)}</div>
       {mode === "active" ? (
         ""
       ) : (

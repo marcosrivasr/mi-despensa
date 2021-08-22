@@ -7,25 +7,23 @@
   gap: 10px;
 
   .row-container {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    .price {
-      font-weight: bolder;
-      display: flex;
-      gap: 5px;
-    }
-
-    .price::before {
-      content: "$";
-    }
 
     .date {
       display: flex;
     }
 
     .product-info {
+      text-overflow: ellipsis;
       display: flex;
       gap: 10px;
     }
+  }
+  .price {
+    font-weight: bolder;
+    display: flex;
+    gap: 5px;
   }
 }

@@ -7,16 +7,24 @@ const SHOPPING_LISTS = "shopping_lists";
 const ENTRIES = "entries";
 
 export async function existsEntry(entryName: string) {
-  const response = await firebase
-    .firestore()
-    .collection(ENTRIES)
-    .where("id", "==", entryName)
-    .get();
-  return !response.empty;
+  try {
+    const response = await firebase
+      .firestore()
+      .collection(ENTRIES)
+      .doc(entryName)
+      .get();
+    return response.exists;
+  } catch (error) {
+    throw new Error(error);
+  }
 }
 
 export async function createEntry(entry: IEntry) {
-  const res = await firebase.firestore().collection(ENTRIES).add(entry);
+  const res = await firebase
+    .firestore()
+    .collection(ENTRIES)
+    .doc(entry.id)
+    .set(entry);
   return res;
 }
 
@@ -39,4 +47,41 @@ export async function getShoppingLists(uid: string) {
     .collection(SHOPPING_LISTS)
     .where("ownerid", "==", uid)
     .get();
+}
+
+export async function getEntry(entryName: string): Promise<IEntry> {
+  const response = await firebase
+    .firestore()
+    .collection(ENTRIES)
+    .doc(entryName)
+    .get();
+  return response.data() as IEntry;
+}
+
+export async function getListsInvited(uid: string) {
+  try {
+    const response = await firebase
+      .firestore()
+      .collection(SHOPPING_LISTS)
+      .where("users", "array-contains", uid)
+      .get();
+
+    return response;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+export async function completeItem(doc, entry) {
+  try {
+    const response = await firebase
+      .firestore()
+      .collection(ENTRIES)
+      .doc(doc)
+      .update(entry);
+
+    return response;
+  } catch (error) {
+    throw new Error(error);
+  }
 }

@@ -1,6 +1,6 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IItemDetails, IListDetails } from "../types/dataState";
 import ViewPane from "./viewPane";
 import { v4 as uuidv4 } from "uuid";
@@ -23,21 +23,52 @@ export default function NewListItemViewPane({
   const [price, setPrice] = useState<number>(0);
   const [day, setDay] = useState<number>(0);
   const [date, setDate] = useState<string>("");
+  const [currentItem, setCurrentItem] = useState<IItemDetails>(null);
   const [frequency, setFrequency] = useState<number>(0);
+  const selectRef = useRef(null);
 
   const db = firebase.firestore();
   const auth = firebase.auth();
 
   useEffect(() => {
     const item: IItemDetails = list.items.find((i) => i.productid === itemid);
+    setCurrentItem({ ...item });
     setTitle(item.title);
     setPrice(item.price);
     setDay(item.day);
     setFrequency(item.frequency);
+
+    selectRef.current.selectedIndex = item.day;
   }, []);
 
   async function handleClickAddItem(e) {
-    const productid = uuidv4();
+    const startdate = Date.now();
+    const updatedItem: IItemDetails = {
+      productid: itemid,
+      title,
+      price,
+      day,
+      frequency,
+      startdate,
+      completed: false,
+      timestamp: currentItem.timestamp,
+    };
+
+    try {
+      const listItems = list.items;
+      const index = listItems.findIndex((i) => i.productid === itemid);
+      listItems[index] = updatedItem;
+
+      const response = await db
+        .collection("shopping_lists")
+        .doc(list.id)
+        .update(list);
+
+      onClose();
+    } catch (error) {
+      console.error(error);
+    }
+    /* const productid = uuidv4();
     const startdate = Date.now();
     const updatedItem: IItemDetails = {
       productid,
@@ -64,7 +95,7 @@ export default function NewListItemViewPane({
       setShow(false);
     } catch (error) {
       console.error(error);
-    }
+    } */
   }
 
   function handleShow() {
@@ -89,7 +120,10 @@ export default function NewListItemViewPane({
         />
 
         <label>Día de la semana</label>
-        <select onChange={(e) => setDay(parseInt(e.target.value))}>
+        <select
+          onChange={(e) => setDay(parseInt(e.target.value))}
+          ref={selectRef}
+        >
           <option value="0" {...(day === 2 ? "yes" : "no")}>
             Domingo
           </option>
@@ -127,7 +161,7 @@ export default function NewListItemViewPane({
           value={frequency}
         />
 
-        <button onClick={handleClickAddItem}>Agregar elemento</button>
+        <button onClick={handleClickAddItem}>Actualizar elemento</button>
       </div>
     </ViewPane>
   );

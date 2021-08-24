@@ -1,27 +1,44 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { useEffect, useState } from "react";
-import { IListDetails } from "../types/dataState";
+import { useEffect, useRef, useState } from "react";
+import { IListDetails, IUser } from "../types/dataState";
 import { v4 as uuidv4 } from "uuid";
 import "./newListView.scss";
 import { Redirect } from "react-router";
 import ViewPane from "./viewPane";
-import EmojiPicker from "../ui-framework/emojiPicker";
+import EmojiPicker, { getEmojiIndex } from "../ui-framework/emojiPicker";
+import UsersView from "./usersView";
 
-export default function NewListView({ shouldCloseViewPane }) {
-  const [title, setTitle] = useState("");
+interface NewListViewProps {
+  shouldCloseViewPane: (boolean) => void;
+  editMode: boolean;
+  listDetails?: IListDetails;
+}
+
+export default function NewListView({
+  shouldCloseViewPane,
+  editMode,
+  listDetails,
+}: NewListViewProps) {
+  console.log(editMode);
+  const [title, setTitle] = useState(listDetails ? listDetails.title : "");
   const [userText, setUserText] = useState("");
-  const [emoji, setEmoji] = useState("");
+  const [emoji, setEmoji] = useState(listDetails ? listDetails.icon : "");
   const [usersFound, setUsersFound] = useState([]);
   const [usersAdded, setUsersAdded] = useState([]);
+  const [invited, setInvited] = useState([]);
+  const [test, setTest] = useState<string>("");
   const [currentUsername, setCurrentUsername] = useState(null);
   const [gotoList, setGotoList] = useState(null);
   const [status, setStatus] = useState("");
   const db = firebase.firestore();
   const auth = firebase.auth();
 
+  const selectRef = useRef(null);
+
   useEffect(() => {
     getCurrentUsername();
+
     async function getCurrentUsername() {
       try {
         const data = await db
@@ -40,6 +57,29 @@ export default function NewListView({ shouldCloseViewPane }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    console.log("useEffect for listDetails");
+    if (listDetails && editMode) {
+      console.log("edit mode");
+      //selectRef.current.selectedIndex = getEmojiIndex(listDetails.icon);
+      let userList: IUser[] = [];
+      let promises = [];
+
+      listDetails.users.forEach((user) => {
+        console.log({ user });
+        promises.push(db.collection("users").doc(user).get());
+      });
+
+      Promise.all(promises).then((res) => {
+        res.map((doc) => {
+          const item = doc.data() as IUser;
+          userList = [...userList, item];
+        });
+        setUsersAdded(userList);
+      });
+    }
+  }, [listDetails]);
 
   function handleChangeSearchUser(e) {
     const text = e.target.value;
@@ -81,7 +121,6 @@ export default function NewListView({ shouldCloseViewPane }) {
 
   async function handleCreateList(e) {
     e.preventDefault();
-    console.log("aa");
     if (title !== "" && usersAdded.length >= 1) {
       const id: string = uuidv4();
       const ownerid: string = currentUsername?.uid;
@@ -106,6 +145,23 @@ export default function NewListView({ shouldCloseViewPane }) {
       }
     } else {
       console.log("Completa los datos");
+    }
+  }
+
+  async function handleUpdateList(e) {
+    e.preventDefault();
+    try {
+      listDetails.title = title;
+      listDetails.icon = emoji;
+      listDetails.users = usersAdded.map((x) => x.uid);
+      await db
+        .collection("shopping_lists")
+        .doc(listDetails.id)
+        .set(listDetails);
+
+      shouldCloseViewPane(true);
+    } catch (error) {
+      console.error(error);
     }
   }
 
@@ -145,17 +201,18 @@ export default function NewListView({ shouldCloseViewPane }) {
 
       <div className="added-users">
         <div>Usuarios añadidos a la lista</div>
-        {usersAdded.length === 0 ? "No users added" : ""}
-        {usersAdded.map((user) => {
-          return <div key={user.uid}>{user.displayName}</div>;
-        })}
+        <UsersView users={usersAdded} />
       </div>
 
       <div>
-        <EmojiPicker onEmojiChange={handleEmojiPickerChanged} />
+        <EmojiPicker onEmojiChange={handleEmojiPickerChanged} ref={selectRef} />
       </div>
 
-      <button onClick={handleCreateList}>Crear lista</button>
+      {editMode && editMode === true ? (
+        <button onClick={handleUpdateList}>Actualizar lista</button>
+      ) : (
+        <button onClick={handleCreateList}>Crear lista</button>
+      )}
     </ViewPane>
   );
 }

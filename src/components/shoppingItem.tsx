@@ -1,4 +1,6 @@
 import { useEffect, useState, lazy, Suspense } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { IItemDetails, IListDetails } from "../types/dataState";
 import Checkbox from "../ui-framework/checkbox";
 import { getDayOfTheWeekGivenANumber } from "../util/date";
@@ -69,7 +71,7 @@ export default function ShoppingItem({
         </div>
         <div className="date">
           <div>
-            Los {getDayOfTheWeekGivenANumber(item.day)} cada {item.frequency}{" "}
+            {getDayOfTheWeekGivenANumber(item.day)} cada {item.frequency}{" "}
             semanas
           </div>
         </div>
@@ -79,8 +81,12 @@ export default function ShoppingItem({
         ""
       ) : (
         <>
-          <button onClick={handleEditClick}>Editar</button>
-          <button onClick={handleRemoveClick}>x</button>
+          <button onClick={handleEditClick} className="editButton">
+            <FontAwesomeIcon className="fontawesome-icon" icon={faPen} />
+          </button>
+          <button onClick={handleRemoveClick} className="deleteButton">
+            <FontAwesomeIcon className="fontawesome-icon" icon={faTrash} />
+          </button>
         </>
       )}
     </div>

@@ -31,6 +31,7 @@ export default function NewListItemViewPane({
   const auth = firebase.auth();
 
   useEffect(() => {
+    console.log(list, itemid);
     const item: IItemDetails = list.items.find((i) => i.productid === itemid);
     setCurrentItem({ ...item });
     setTitle(item.title);
@@ -38,7 +39,9 @@ export default function NewListItemViewPane({
     setDay(item.day);
     setFrequency(item.frequency);
 
-    selectRef.current.selectedIndex = item.day;
+    if (item) {
+      selectRef.current.selectedIndex = item.day;
+    }
   }, []);
 
   async function handleClickAddItem(e) {

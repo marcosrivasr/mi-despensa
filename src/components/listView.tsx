@@ -8,6 +8,7 @@ import MainInput from "./mainInput";
 import { IItemDetails, IListDetails } from "../types/dataState";
 import "./listView.scss";
 const NewListItemViewPane = lazy(() => import("./newListItemViewPane"));
+const NewListView = lazy(() => import("./newListView"));
 
 export default function ListView({ match, location, history }) {
   const [listDetails, setListDetails] = useState<IListDetails>(null);
@@ -15,6 +16,7 @@ export default function ListView({ match, location, history }) {
   const [currentDoc, setCurrentDoc] = useState(null);
   const [itemId, setItemId] = useState("");
   const [showPane, setShowPane] = useState(false);
+  const [showListPane, setShowListPane] = useState(false);
   const db = firebase.firestore();
   const auth = firebase.auth();
   const listId = match.params.id;
@@ -77,23 +79,27 @@ export default function ListView({ match, location, history }) {
     );
   }
 
-  function handleClickAddItem(e) {
-    setShowPane(true);
+  /**
+   * Función para mostrar la vista de Edición de lista
+   * @param id
+   */
+  function handleEditList(id) {
+    setShowListPane(true);
   }
 
-  function onHandleShouldCloseViewPane(state) {
-    setShowPane(state);
+  function handleClose(state) {
+    setShowListPane(false);
   }
 
   return (
     <div>
       <div>
-        <PrimaryButton onClick={handleClickAddItem} value="Añadir elemento" />
+        <PrimaryButton onClick={handleEditList} value="Editar lista" />
       </div>
 
       <div>
         <div className="listViewInfo">
-          <h2 className="listTitle">{listDetails ? listDetails.title : ""}</h2>
+          <h2 className="listTitle">{listDetails ? listDetails.title : ""}{listDetails ? listDetails.icon : ""}</h2>
           <h2>
             $
             {listDetails
@@ -112,6 +118,18 @@ export default function ListView({ match, location, history }) {
             itemid={itemId}
             list={listDetails}
             onClose={() => setShowPane(false)}
+          />
+        </Suspense>
+      ) : (
+        ""
+      )}
+
+      {showListPane ? (
+        <Suspense fallback={<div>Loading...</div>}>
+          <NewListView
+            shouldCloseViewPane={handleClose}
+            editMode={true}
+            listDetails={listDetails}
           />
         </Suspense>
       ) : (

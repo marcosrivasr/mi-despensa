@@ -39,3 +39,11 @@ export interface IEntry {
   date: number;
   lists: IListDetails[];
 }
+
+export interface IUser {
+  uid: string;
+  username: string;
+  email: string;
+  displayName: string;
+  photoURL: string;
+}

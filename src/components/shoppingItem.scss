@@ -1,18 +1,28 @@
+@mixin button {
+  color: #bbb;
+  font-size: 18px;
+  border: none;
+  background: none;
+  padding: 24px 15px;
+  cursor: pointer;
+}
+
 .row {
   font-size: 18px;
   display: flex;
-  padding: 10px 0;
+
   border-bottom: solid 1px #ddd;
   align-items: center;
-  gap: 10px;
 
   .row-container {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    padding: 10px 0;
 
     .date {
       display: flex;
+      font-size: 14px;
     }
 
     .product-info {
@@ -24,6 +34,31 @@
   .price {
     font-weight: bolder;
     display: flex;
-    gap: 5px;
+    padding: 0 10px;
+  }
+
+  .editButton {
+    @include button();
+
+    &:hover {
+      background: rgb(22, 130, 219);
+      color: white;
+      svg {
+        fill: white;
+      }
+    }
+  }
+
+  .deleteButton {
+    @include button();
+
+    &:hover {
+      background: rgb(247, 68, 68);
+      color: white;
+
+      svg {
+        fill: white;
+      }
+    }
   }
 }

@@ -88,7 +88,10 @@ export default function Dashboard() {
 
       {showNewListView ? (
         <Suspense fallback={<div>Loading...</div>}>
-          <NewListView shouldCloseViewPane={onHandleShouldCloseViewPane} />
+          <NewListView
+            shouldCloseViewPane={onHandleShouldCloseViewPane}
+            editMode={false}
+          />
         </Suspense>
       ) : (
         ""

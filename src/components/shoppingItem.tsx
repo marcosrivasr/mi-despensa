@@ -13,10 +13,17 @@ interface shoppingItemProps {
   item: IItemDetails;
   list: string;
   mode: "active" | "read";
+  entryId?: string;
   onEdit?: (id: string) => void;
-  onChanged?: (listId: string, item: IItemDetails, completed: boolean) => void;
+  onChanged?: (
+    entryId: string,
+    listId: string,
+    item: IItemDetails,
+    completed: boolean
+  ) => void;
 }
 export default function ShoppingItem({
+  entryId,
   item,
   list,
   mode,
@@ -26,7 +33,7 @@ export default function ShoppingItem({
   const d = new Date(item.startdate);
 
   function handleCheckboxChange(state) {
-    onChanged(list, item, state);
+    onChanged(entryId, list, item, state);
   }
 
   async function handleRemoveClick() {

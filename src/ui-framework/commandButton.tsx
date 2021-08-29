@@ -20,7 +20,6 @@ export default function CommandButton({
 }: CommandButtonProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [selected, setSelected] = useState(null);
-  const [id, setId] = useState(uuidv4());
   const ref = useRef(null);
 
   useEffect(() => {
@@ -34,8 +33,6 @@ export default function CommandButton({
     window.addEventListener(
       "click",
       (e) => {
-        ref.current.id = id;
-        console.log(showMenu, e.target === ref.current);
         if (e.target !== ref.current) {
           setShowMenu(false);
         }
@@ -52,7 +49,7 @@ export default function CommandButton({
 
   return (
     <div className="commandButton">
-      <button type="button" id={id} onClick={handleClick} ref={ref}>
+      <button type="button" onClick={handleClick} ref={ref}>
         <FontAwesomeIcon className="fontawesome-icon" icon={icon} />
       </button>
       <div

@@ -16,6 +16,9 @@ import {
 } from "../services/firestoreService";
 import { IEntry } from "../types/dataState";
 import { Redirect } from "react-router";
+import { formatPrice } from "../util/string";
+
+import "./home.scss";
 
 export default function Home() {
   const [today, setToday] = useState<IEntry>(null);
@@ -35,89 +38,144 @@ export default function Home() {
     });
 
     async function getUserShoppingListForToday(userLogged: firebase.User) {
-      //const currentUser = firebase.auth().currentUser;
       setCurrentUser(userLogged);
       const entryId = userLogged.uid + "_" + getDate();
-      const exists = await existsEntry(entryId);
+
       const user = await getUser(userLogged.uid);
-      const response = await getShoppingLists(userLogged.uid);
+      const listsResponse = await getShoppingLists(userLogged.uid);
+      const listsInvitedResponse = await getListsInvited(userLogged.uid);
 
       const todayLists = [];
       //recorre toda la lista
-      response.forEach((list) => {
-        const dataLists: IListDetails = list.data() as IListDetails;
-
-        let itemsForToday = [];
-        //recorre toda la lista de items
-        itemsForToday = dataLists.items.filter((item: IItemDetails) => {
-          return getCurrentDayOfTheWeek() === item.day;
-        });
+      listsResponse.forEach((list) => {
+        const itemsForToday = list.items.filter(
+          (item) => getCurrentDayOfTheWeek() === item.day
+        );
 
         if (itemsForToday.length > 0) {
-          dataLists.items = [...itemsForToday];
-          todayLists.push(dataLists);
+          todayLists.push(list);
         }
       });
 
-      if (!exists) {
-        entry = {
-          id: entryId,
-          date: Date.now(),
-          lists: todayLists,
-        };
-        const res = await createEntry(entry);
+      listsInvitedResponse.forEach((list) => {
+        const itemsForToday = list.items.filter(
+          (item) => getCurrentDayOfTheWeek() === item.day
+        );
+
+        if (itemsForToday.length > 0) {
+          todayLists.push(list);
+        }
+      });
+
+      entry = {
+        id: entryId,
+        date: Date.now(),
+        lists: todayLists,
+      };
+
+      const exists = await existsEntry(entryId);
+      if (exists) {
+        const entryResponse = await getEntry(entryId);
+        entry = entryResponse;
       } else {
+        await createEntry(entry);
         entry = await getEntry(entryId);
       }
-      /* try {
-        const invitedLists = await getListsInvited(userLogged.uid);
-        invitedLists.forEach((list) => {
-          //TODO: se obtienen las listas pero se necesita filtrar por aquellas donde ya está el usuario o es el owner
-          entry.lists.push(list.data() as IListDetails);
-        });
-        await createEntry(entry);
-      } catch (error) {} */
+
       setToday(entry);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  async function handleCompleted(listId, item: IItemDetails, completed) {
-    const entryId = currentUser.uid + "_" + getDate();
-
+  async function handleCompleted(
+    entryId: string,
+    listId: string,
+    item: IItemDetails,
+    completed: boolean
+  ) {
     try {
       const currentEntry = { ...today };
       debugger;
-      const indexList = currentEntry.lists.findIndex((x) => x.id === listId);
-      const indexItem = currentEntry.lists[indexList].items.findIndex(
+      const listToUpdate = currentEntry.lists.find((x) => x.id === listId);
+      const itemToUpdate = listToUpdate.items.find(
         (x) => x.productid === item.productid
       );
-      currentEntry.lists[indexList].items[indexItem].completed = completed;
-      console.log(entryId, listId, item, currentEntry);
+
+      itemToUpdate.completed = !itemToUpdate.completed;
+
+      setToday(currentEntry);
+
       await completeItem(entryId, currentEntry);
     } catch (error) {
       console.error(error);
     }
   }
 
+  function ListName({ name, people }) {
+    return (
+      <div className="listDetails">
+        <div>
+          <h3>{name}</h3>
+        </div>
+        <div className="total">{people.length + 1} integrantes</div>
+      </div>
+    );
+  }
+
+  function NumberOfItems({ current, total }) {
+    return (
+      <div className="numberOfItems">
+        <div className="current">{current} items</div>
+        <div className="total">{total} items</div>
+      </div>
+    );
+  }
+  function Totals({ current, total }) {
+    return (
+      <div className="totals">
+        <div className="current">{formatPrice(current)}</div>
+        <div className="total">{formatPrice(total)}</div>
+      </div>
+    );
+  }
+
+  if (logged === null) return <div>"Loading"</div>;
+
+  if (logged === false) return <Redirect to="/login" />;
+
   return (
     <div>
-      {logged === null ? "Loading..." : ""}
-      {logged === false ? <Redirect to="/login" /> : ""}
       <h1>Home</h1>
       {currentUser && today && today.lists && today.lists.length
         ? today.lists.map((list) => {
             return (
-              <div>
-                <h2>
-                  {list.title} {list.items.length}
-                </h2>
+              <div key={list.id}>
+                <div className="headerList">
+                  <ListName name={list.title} people={list.users} />
+
+                  <NumberOfItems
+                    current={list.items.filter((item) => item.completed).length}
+                    total={list.items.length}
+                  />
+                  <Totals
+                    total={list.items.reduce(
+                      (sum, item) => sum + item.price,
+                      0
+                    )}
+                    current={list.items
+                      .filter((item) => item.completed)
+                      .reduce((sum, item) => sum + item.price, 0)}
+                  />
+                </div>
+
                 {list.items.map((item: IItemDetails) => {
                   return (
                     <ShoppingItem
+                      key={item.productid}
                       item={item}
                       mode="active"
                       list={list.id}
+                      entryId={today.id}
                       onChanged={handleCompleted}
                     />
                   );

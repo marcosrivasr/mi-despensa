@@ -1,0 +1,20 @@
+.headerList {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 60px 0 20px 0;
+
+  h3 {
+    margin: 0;
+    font-size: 24px;
+  }
+
+  .current {
+    font-weight: bold;
+  }
+
+  .total {
+    font-size: 14px;
+    font-weight: lighter;
+  }
+}

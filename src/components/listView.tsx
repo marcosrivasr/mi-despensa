@@ -25,20 +25,25 @@ export default function ListView({ match, location, history }) {
     getCurrentUsername();
     getListDetails();
     async function getCurrentUsername() {
-      try {
-        const data = await db
-          .collection("users")
-          .where("uid", "==", auth.currentUser.uid)
-          .get();
-        if (data.empty) {
+      auth.onAuthStateChanged(async (user) => {
+        if (user) {
+          try {
+            const data = await db
+              .collection("users")
+              .where("uid", "==", auth.currentUser.uid)
+              .get();
+            if (data.empty) {
+            } else {
+              data.forEach((userFound) => {
+                setCurrentUsername(userFound.data());
+              });
+            }
+          } catch (error) {
+            console.error(error);
+          }
         } else {
-          data.forEach((userFound) => {
-            setCurrentUsername(userFound.data());
-          });
         }
-      } catch (error) {
-        console.error(error);
-      }
+      });
     }
     async function getListDetails() {
       db.collection("shopping_lists")
@@ -99,7 +104,10 @@ export default function ListView({ match, location, history }) {
 
       <div>
         <div className="listViewInfo">
-          <h2 className="listTitle">{listDetails ? listDetails.title : ""}{listDetails ? listDetails.icon : ""}</h2>
+          <h2 className="listTitle">
+            {listDetails ? listDetails.title : ""}
+            {listDetails ? listDetails.icon : ""}
+          </h2>
           <h2>
             $
             {listDetails

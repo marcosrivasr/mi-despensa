@@ -4,6 +4,7 @@ import "firebase/firestore";
 import firebase from "firebase/app";
 import { LoginState } from "../types/dataState";
 import { Redirect } from "react-router";
+import "./nickname.scss";
 
 export default function Nickname() {
   const [username, setUsername] = useState("");
@@ -59,7 +60,7 @@ export default function Nickname() {
 
   function getUsernameForm() {
     return (
-      <>
+      <div className="nickname">
         <h2>Selecciona un nombre de usuario</h2>
         <form onSubmit={handleSubmit}>
           <input
@@ -68,7 +69,7 @@ export default function Nickname() {
             onChange={(e) => setUsername(e.target.value)}
           />
           <input type="submit" value="Validar" />
-          <span>
+          <div>
             {loginProcess === LoginState.UsernameAvailable
               ? "El nombre de usuario está disponible!"
               : ""}
@@ -79,13 +80,17 @@ export default function Nickname() {
             {loginProcess === LoginState.LoginCompleted ? "Bienvenido" : ""}
 
             {loginProcess === LoginState.UsernameAvailable ? (
-              <button onClick={handleCompleteProcess}>Terminar registro</button>
+              <div>
+                <button onClick={handleCompleteProcess}>
+                  Terminar registro
+                </button>
+              </div>
             ) : (
               ""
             )}
-          </span>
+          </div>
         </form>
-      </>
+      </div>
     );
   }
 

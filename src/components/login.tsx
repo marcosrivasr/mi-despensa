@@ -33,7 +33,12 @@ export default function Login() {
 
       if (response.exists) {
         console.log("El usuario está registrado");
-        setRedirectNickName(1);
+        if (!response.data().username) {
+          console.log("No tienes username");
+          setRedirectNickName(2);
+        } else {
+          setRedirectNickName(1);
+        }
       } else {
         console.log("El usuario NO está registrado");
         setRedirectNickName(2);

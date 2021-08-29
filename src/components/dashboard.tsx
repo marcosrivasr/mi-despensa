@@ -9,6 +9,7 @@ import { useEffect, useState, lazy, Suspense } from "react";
 import { DataState } from "../types/dataState";
 import PrimaryButton from "../ui-framework/primaryButton";
 import SquareItem from "./squareItem";
+import { getListsInvited, getListsOwned } from "../services/firestoreService";
 
 import "./listsView.scss";
 
@@ -22,25 +23,21 @@ export default function Dashboard() {
   const auth = firebase.auth();
 
   const [lists, setLists] = useState([]);
+  const [listsInvited, setListsInvited] = useState([]);
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((user) => {
+    firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
         // User is signed in, see docs for a list of available properties
         // https://firebase.google.com/docs/reference/js/firebase.User
         setCurrentUser(user);
         setIsUserSigned(DataState.Completed);
 
-        db.collection("shopping_lists")
-          .where("ownerid", "==", user.uid)
-          .get()
-          .then((data) => {
-            let dataLists = [];
-            data.forEach((item) => {
-              dataLists.push(item.data());
-            });
-            setLists(dataLists);
-          });
+        const listsInvited = await getListsInvited(user.uid);
+        setListsInvited(listsInvited);
+
+        const listsOwned = await getListsOwned(user.uid);
+        setLists(listsOwned);
       } else {
         setIsUserSigned(DataState.Error);
         // User is signed out
@@ -80,7 +77,17 @@ export default function Dashboard() {
         {lists.map((list) => {
           return (
             <Link to={`/list/${list.id}`} style={{ textDecoration: "none" }}>
-              <SquareItem key={list.id} text={list.title} emoji={list.icon} />
+              <SquareItem key={list.id} item={list} />
+            </Link>
+          );
+        })}
+      </div>
+
+      <div className="listsContainer">
+        {listsInvited.map((list) => {
+          return (
+            <Link to={`/list/${list.id}`} style={{ textDecoration: "none" }}>
+              <SquareItem key={list.id} item={list} />
             </Link>
           );
         })}

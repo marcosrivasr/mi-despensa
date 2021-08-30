@@ -5,3 +5,12 @@
     flex-grow: 1;
   }
 }
+
+.peopleContainer {
+  display: flex;
+  gap: 5px;
+  img {
+    width: 32px;
+    border-radius: 50%;
+  }
+}

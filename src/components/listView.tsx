@@ -5,7 +5,7 @@ import "firebase/firestore";
 import ShoppingItem from "./shoppingItem";
 import PrimaryButton from "../ui-framework/primaryButton";
 import MainInput from "./mainInput";
-import { IItemDetails, IListDetails } from "../types/dataState";
+import { IItemDetails, IListDetails, IUser } from "../types/dataState";
 import "./listView.scss";
 const NewListItemViewPane = lazy(() => import("./newListItemViewPane"));
 const NewListView = lazy(() => import("./newListView"));
@@ -17,16 +17,19 @@ export default function ListView({ match, location, history }) {
   const [itemId, setItemId] = useState("");
   const [showPane, setShowPane] = useState(false);
   const [showListPane, setShowListPane] = useState(false);
+  const [people, setPeople] = useState([]);
   const db = firebase.firestore();
   const auth = firebase.auth();
   const listId = match.params.id;
 
   useEffect(() => {
+    console.log("aaaa");
     getCurrentUsername();
-    getListDetails();
+
     async function getCurrentUsername() {
       auth.onAuthStateChanged(async (user) => {
         if (user) {
+          getListDetails();
           try {
             const data = await db
               .collection("users")
@@ -45,12 +48,14 @@ export default function ListView({ match, location, history }) {
         }
       });
     }
+
     async function getListDetails() {
       db.collection("shopping_lists")
         .doc(listId)
         .onSnapshot((doc) => {
           console.log(doc.data());
           setListDetails(doc.data() as IListDetails);
+          getPeopleInvited(listDetails);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -96,6 +101,56 @@ export default function ListView({ match, location, history }) {
     setShowListPane(false);
   }
 
+  async function getPeopleInvited(list: IListDetails) {
+    let usersPromise = [];
+    let usersArr: Array<IUser> = [];
+    debugger;
+    if (list && list.users.length > 0) {
+      try {
+        list.users.forEach((user) => {
+          usersPromise.push(db.collection("users").doc(user).get());
+        });
+
+        const response = await Promise.all(usersPromise);
+
+        response.forEach((user) => {
+          if (user.data()) {
+            usersArr.push(user.data() as IUser);
+            console.log(user.data());
+          }
+        });
+      } catch (error) {
+        console.error(error);
+      }
+
+      setPeople([...usersArr]);
+    }
+  }
+
+  function People({ users }) {
+    return (
+      <div className="peopleContainer">
+        {currentUsername ? (
+          <div key={currentUsername.uid}>
+            <img
+              src={currentUsername.photoURL}
+              alt={currentUsername.displayName}
+            />
+          </div>
+        ) : (
+          ""
+        )}
+        {users && users.length
+          ? users.map((user) => (
+              <div key={user.uid}>
+                <img src={user.photoURL} alt={user.displayName} />
+              </div>
+            ))
+          : ""}
+      </div>
+    );
+  }
+
   return (
     <div>
       <div>
@@ -115,6 +170,7 @@ export default function ListView({ match, location, history }) {
               : ""}
           </h2>
         </div>
+        {listDetails && currentUsername ? <People users={people} /> : ""}
 
         {listDetails ? showListItems() : ""}
       </div>

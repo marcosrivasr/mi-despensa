@@ -17,11 +17,13 @@ export default function SquareItem({ item }: SquareItemProps) {
     getUserInfo();
 
     async function getUserInfo() {
-      const response = await getUser(item.ownerid);
-      const user = response.data() as IUser;
-      setListOwner(user);
+      try {
+        let response = await getUser(item.ownerid);
+        const user = response.data() as IUser;
+        setListOwner(user);
+      } catch (error) {}
     }
-  });
+  }, []);
 
   return (
     <div className="squareItem">

@@ -41,6 +41,13 @@ export default function Home() {
       setCurrentUser(userLogged);
       const entryId = userLogged.uid + "_" + getDate();
 
+      if (localStorage.getItem(entryId)) {
+        entry = JSON.parse(localStorage.getItem(entryId) as string);
+        console.log("cargado desde local");
+        setToday(entry);
+        return;
+      }
+
       const user = await getUser(userLogged.uid);
       const listsResponse = await getShoppingLists(userLogged.uid);
       const listsInvitedResponse = await getListsInvited(userLogged.uid);
@@ -82,6 +89,8 @@ export default function Home() {
         entry = await getEntry(entryId);
       }
 
+      localStorage.setItem(entryId, JSON.stringify(entry));
+
       setToday(entry);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,7 +111,7 @@ export default function Home() {
       );
 
       itemToUpdate.completed = !itemToUpdate.completed;
-
+      localStorage.setItem(entryId, JSON.stringify(currentEntry));
       setToday(currentEntry);
 
       await completeItem(entryId, currentEntry);

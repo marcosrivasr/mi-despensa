@@ -9,18 +9,21 @@ import { useEffect, useState, lazy, Suspense } from "react";
 import { DataState } from "../types/dataState";
 import PrimaryButton from "../ui-framework/primaryButton";
 import SquareItem from "./squareItem";
-import { getListsInvited, getListsOwned } from "../services/firestoreService";
+import {
+  getListsInvited,
+  getListsOwned,
+  getUser,
+} from "../services/firestoreService";
 
 import "./listsView.scss";
 
 const NewListView = lazy(() => import("./newListView"));
 
 export default function Dashboard() {
+  const [logged, setLogged] = useState(null);
   const [isUserSigned, setIsUserSigned] = useState<DataState>(DataState.None);
   const [currentUser, setCurrentUser] = useState(null);
   const [showNewListView, setshowNewListView] = useState(false);
-  const db = firebase.firestore();
-  const auth = firebase.auth();
 
   const [lists, setLists] = useState([]);
   const [listsInvited, setListsInvited] = useState([]);
@@ -28,42 +31,27 @@ export default function Dashboard() {
   useEffect(() => {
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
+        setLogged(true);
         setCurrentUser(user);
-        setIsUserSigned(DataState.Completed);
-
-        const listsInvited = await getListsInvited(user.uid);
-        setListsInvited(listsInvited);
 
         const listsOwned = await getListsOwned(user.uid);
         setLists(listsOwned);
+
+        const listsInvited = await getListsInvited(user.uid);
+        setListsInvited(listsInvited);
       } else {
-        setIsUserSigned(DataState.Error);
-        // User is signed out
-        // ...
+        setLogged(false);
       }
     });
   }, []);
 
-  function getDisplayName() {
-    return (
-      <div>
-        <p>
-          <img src={currentUser?.photoURL} alt="" />
-        </p>
-        {currentUser?.displayName}
-      </div>
-    );
-  }
-
-  function getDataCollections() {
-    return <div>Lista</div>;
-  }
-
   function onHandleShouldCloseViewPane(state) {
     setshowNewListView(state);
   }
+
+  if (logged === null) return <div>Loading</div>;
+
+  if (logged === false) return <Redirect to="/login" />;
 
   return (
     <div>
@@ -76,7 +64,11 @@ export default function Dashboard() {
       <div className="listsContainer">
         {lists.map((list) => {
           return (
-            <Link to={`/list/${list.id}`} style={{ textDecoration: "none" }}>
+            <Link
+              key={list.id}
+              to={`/list/${list.id}`}
+              style={{ textDecoration: "none" }}
+            >
               <SquareItem key={list.id} item={list} />
             </Link>
           );
@@ -86,7 +78,11 @@ export default function Dashboard() {
       <div className="listsContainer">
         {listsInvited.map((list) => {
           return (
-            <Link to={`/list/${list.id}`} style={{ textDecoration: "none" }}>
+            <Link
+              key={list.id}
+              to={`/list/${list.id}`}
+              style={{ textDecoration: "none" }}
+            >
               <SquareItem key={list.id} item={list} />
             </Link>
           );

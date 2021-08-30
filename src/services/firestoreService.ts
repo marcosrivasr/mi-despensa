@@ -77,20 +77,22 @@ export async function getEntry(entryName: string): Promise<IEntry> {
   return response.data() as IEntry;
 }
 
-export async function getListsInvited(uid: string): Promise<IListDetails[]> {
+export async function getListsInvited(uid: string) {
   let res = [];
   try {
-    const response = await firebase
+    let response = await firebase
       .firestore()
       .collection(SHOPPING_LISTS)
-      .where("users", "array-contains", uid)
+      .where("users", "array-contains-any", [uid])
       .get();
 
     if (response.empty) return [];
 
     response.forEach((doc) => {
       res.push(doc.data());
+      console.log("222");
     });
+    response = null;
 
     return res;
   } catch (error) {

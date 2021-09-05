@@ -29,3 +29,14 @@ export function getDate() {
   const dt = `${dd}_${mm}_${yyyy}`;
   return dt;
 }
+
+export function getDateWithFormat(date: number) {
+  const d = new Date(date);
+  const dd = d.getDate();
+  let mm = d.getMonth() + 1;
+  const yyyy = d.getFullYear();
+  const mmString = mm < 10 ? `0${mm}` : mm;
+  const ddString = dd < 10 ? `0${dd}` : dd;
+  const dt = `${yyyy}-${mmString}-${ddString}`;
+  return dt;
+}

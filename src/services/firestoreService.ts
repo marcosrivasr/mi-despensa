@@ -46,6 +46,19 @@ export async function updateEntry(entry) {
   }
 }
 
+export async function updateItem(listId, list) {
+  try {
+    const res = await firebase
+      .firestore()
+      .collection(SHOPPING_LISTS)
+      .doc(listId)
+      .update(list);
+    return res;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export async function getUser(uid: string) {
   return await firebase.firestore().collection(USERS).doc(uid).get();
 }

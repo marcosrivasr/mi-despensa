@@ -3,7 +3,9 @@ import "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { IItemDetails, IListDetails } from "../types/dataState";
 import ViewPane from "./viewPane";
-import { v4 as uuidv4 } from "uuid";
+
+import { getDateWithFormat } from "../util/date";
+import { updateItem } from "../services/firestoreService";
 
 interface NewListItemViewPaneProps {
   showPane: boolean;
@@ -31,12 +33,17 @@ export default function NewListItemViewPane({
   const auth = firebase.auth();
 
   useEffect(() => {
-    console.log(list, itemid);
     const item: IItemDetails = list.items.find((i) => i.productid === itemid);
     setCurrentItem({ ...item });
     setTitle(item.title);
     setPrice(item.price);
     setDay(item.day);
+    setDate(getDateWithFormat(item.startdate));
+    console.log(
+      item.startdate,
+      new Date(item.startdate),
+      getDateWithFormat(item.startdate)
+    );
     setFrequency(item.frequency);
 
     if (item) {
@@ -44,7 +51,7 @@ export default function NewListItemViewPane({
     }
   }, []);
 
-  async function handleClickAddItem(e) {
+  async function handleClickUpdateItem(e) {
     const startdate = Date.now();
     const updatedItem: IItemDetails = {
       productid: itemid,
@@ -54,18 +61,18 @@ export default function NewListItemViewPane({
       frequency,
       startdate,
       completed: false,
-      timestamp: currentItem.timestamp,
+      timestamp: Date.now(),
     };
 
     try {
-      const listItems = list.items;
+      const listItems = [...list.items];
       const index = listItems.findIndex((i) => i.productid === itemid);
       listItems[index] = updatedItem;
 
-      const response = await db
-        .collection("shopping_lists")
-        .doc(list.id)
-        .update(list);
+      list.items = [...listItems];
+      console.log("item a actualizar", updatedItem);
+      console.log("lol", list.id, listItems, list);
+      await updateItem(list.id, list);
 
       onClose();
     } catch (error) {
@@ -162,9 +169,10 @@ export default function NewListItemViewPane({
           type="number"
           onChange={(e) => setFrequency(parseInt(e.target.value))}
           value={frequency}
+          min="1"
         />
 
-        <button onClick={handleClickAddItem}>Actualizar elemento</button>
+        <button onClick={handleClickUpdateItem}>Actualizar elemento</button>
       </div>
     </ViewPane>
   );

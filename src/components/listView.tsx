@@ -55,7 +55,7 @@ export default function ListView({ match, location, history }) {
         .onSnapshot((doc) => {
           console.log(doc.data());
           setListDetails(doc.data() as IListDetails);
-          getPeopleInvited(listDetails);
+          getPeopleInvited(doc.data() as IListDetails);
         });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,27 +104,25 @@ export default function ListView({ match, location, history }) {
   async function getPeopleInvited(list: IListDetails) {
     let usersPromise = [];
     let usersArr: Array<IUser> = [];
-    debugger;
-    if (list && list.users.length > 0) {
-      try {
-        list.users.forEach((user) => {
-          usersPromise.push(db.collection("users").doc(user).get());
-        });
 
-        const response = await Promise.all(usersPromise);
+    try {
+      list.users.forEach((user) => {
+        usersPromise.push(db.collection("users").doc(user).get());
+      });
 
-        response.forEach((user) => {
-          if (user.data()) {
-            usersArr.push(user.data() as IUser);
-            console.log(user.data());
-          }
-        });
-      } catch (error) {
-        console.error(error);
-      }
+      const response = await Promise.all(usersPromise);
 
-      setPeople([...usersArr]);
+      response.forEach((user) => {
+        if (user.data()) {
+          usersArr.push(user.data() as IUser);
+          console.log(user.data());
+        }
+      });
+    } catch (error) {
+      console.error(error);
     }
+
+    setPeople([...usersArr]);
   }
 
   function People({ users }) {

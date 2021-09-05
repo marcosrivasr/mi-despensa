@@ -15,12 +15,7 @@ interface shoppingItemProps {
   mode: "active" | "read";
   entryId?: string;
   onEdit?: (id: string) => void;
-  onChanged?: (
-    entryId: string,
-    listId: string,
-    item: IItemDetails,
-    completed: boolean
-  ) => void;
+  onChanged?: (completed: boolean) => void;
 }
 export default function ShoppingItem({
   entryId,
@@ -32,8 +27,8 @@ export default function ShoppingItem({
 }: shoppingItemProps) {
   const d = new Date(item.startdate);
 
-  function handleCheckboxChange(state) {
-    onChanged(entryId, list, item, state);
+  function handleCheckboxChange(state: boolean) {
+    onChanged(state);
   }
 
   async function handleRemoveClick() {

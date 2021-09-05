@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/firestore";
 import { IEntry, IListDetails } from "../types/dataState";
+import { getCurrentDayOfTheWeek, getDate } from "../util/date";
 
 const USERS = "users";
 const SHOPPING_LISTS = "shopping_lists";
@@ -90,7 +91,6 @@ export async function getListsInvited(uid: string) {
 
     response.forEach((doc) => {
       res.push(doc.data());
-      console.log("222");
     });
     response = null;
 
@@ -132,4 +132,62 @@ export async function completeItem(doc, entry) {
   } catch (error) {
     throw new Error(error);
   }
+}
+
+export async function getEntries(userLogged: firebase.User) {
+  const user = userLogged;
+
+  //obtenemos las listas del usuario
+  const listsOwned = await getShoppingLists(user.uid);
+
+  // ahora obtenemos las listas invitadas
+  const listsInvited = await getListsInvited(user.uid);
+
+  const listsOwnedForToday = await processListsForToday(listsOwned);
+
+  const listsInvitedForToday = await processListsForToday(listsInvited);
+
+  return [...listsOwnedForToday, ...listsInvitedForToday];
+}
+
+/**
+ * Procesa las listas para crear una entrada con los elementos de hoy
+ * @param lists
+ * @returns A promise with the lists for today
+ */
+async function processListsForToday(lists: IListDetails[]) {
+  let tempEntries = Array<IEntry>();
+  const date = getDate();
+  //recorremos las listas para obtener solo las que son de hoy
+  for (let i = 0; i < lists.length; i++) {
+    const list = lists[i];
+    //filtramos los elementos de hoy en cada lista
+    const items = list.items.filter(
+      (item) => item.day === getCurrentDayOfTheWeek()
+    );
+
+    //actulizamos los items en cada lista
+    list.items = [...items];
+    if (list.items.length === 0) continue;
+
+    const entryId = `${date}_${list.id}`;
+
+    const exists = await existsEntry(entryId);
+    console.log(exists);
+    if (exists) {
+      const entry = await getEntry(entryId);
+      tempEntries.push(entry);
+    } else {
+      const entry: IEntry = {
+        id: entryId,
+        date: Date.now(),
+        list: { ...list },
+      };
+      console.log("entry", entry);
+      await createEntry(entry);
+      tempEntries.push(entry);
+    }
+  }
+
+  return tempEntries;
 }

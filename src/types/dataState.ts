@@ -37,7 +37,7 @@ export interface IItemDetails {
 export interface IEntry {
   id: string;
   date: number;
-  lists: IListDetails[];
+  list: IListDetails;
 }
 
 export interface IUser {

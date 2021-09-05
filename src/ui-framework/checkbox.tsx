@@ -39,6 +39,7 @@ export default function Checkbox({ checked, onChanged }: CheckboxProps) {
       <input
         type="checkbox"
         checked={checked}
+        onChange={(e) => {}}
         hidden
         style={{ display: "none" }}
       />

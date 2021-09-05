@@ -17,6 +17,10 @@ export function getCurrentDayOfTheWeek() {
   return day;
 }
 
+/**
+ * Regresa la fecha de hoy en el siguiente formato "dd_mm_yyyy"
+ * @returns {string}
+ */
 export function getDate() {
   let d = new Date();
   const dd = d.getDate();

@@ -7,3 +7,7 @@ export function formatPrice(number: number) {
 
   return formatter.format(number);
 }
+
+export function classNames(...args: any[]) {
+  return args.filter(Boolean).join(" ");
+}

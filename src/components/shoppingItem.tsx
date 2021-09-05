@@ -8,6 +8,7 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import "./shoppingItem.scss";
+import { classNames } from "../util/string";
 
 interface shoppingItemProps {
   item: IItemDetails;
@@ -63,7 +64,7 @@ export default function ShoppingItem({
   });
 
   return (
-    <div className="row">
+    <div className={classNames("row", item.completed ? "completed" : "")}>
       {mode === "active" ? (
         <Checkbox checked={item.completed} onChanged={handleCheckboxChange} />
       ) : null}

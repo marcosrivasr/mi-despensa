@@ -14,6 +14,13 @@
   border-bottom: solid 1px #ddd;
   align-items: center;
 
+  &.completed {
+    transition: opacity 0.5s;
+    .row-container {
+      opacity: 0.5;
+    }
+  }
+
   .row-container {
     flex-grow: 1;
     display: flex;

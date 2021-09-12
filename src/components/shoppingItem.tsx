@@ -75,7 +75,7 @@ export default function ShoppingItem({
         <div className="date">
           <div>
             {getDayOfTheWeekGivenANumber(item.day)} cada {item.frequency}{" "}
-            semanas
+            semanas{" "}
           </div>
         </div>
       </div>

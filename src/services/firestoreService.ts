@@ -2,6 +2,7 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import { IEntry, IListDetails } from "../types/dataState";
 import { getCurrentDayOfTheWeek, getDate } from "../util/date";
+import { weeksBetweenDates } from "../util/date";
 
 const USERS = "users";
 const SHOPPING_LISTS = "shopping_lists";
@@ -176,7 +177,11 @@ async function processListsForToday(lists: IListDetails[]) {
     const list = lists[i];
     //filtramos los elementos de hoy en cada lista
     const items = list.items.filter(
-      (item) => item.day === getCurrentDayOfTheWeek()
+      (item) =>
+        item.day === getCurrentDayOfTheWeek() &&
+        weeksBetweenDates(new Date(item.startdate), new Date(Date.now())) %
+          item.frequency ===
+          0
     );
 
     //actulizamos los items en cada lista

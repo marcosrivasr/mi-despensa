@@ -40,3 +40,12 @@ export function getDateWithFormat(date: number) {
   const dt = `${yyyy}-${mmString}-${ddString}`;
   return dt;
 }
+
+export function weeksBetweenDates(startDate: Date, endDate: Date) {
+  const start = startDate.getTime();
+  const end = endDate.getTime();
+  const diff = end - start;
+  const days = diff / (1000 * 60 * 60 * 24);
+  const weeks = days / 7;
+  return Math.round(weeks);
+}

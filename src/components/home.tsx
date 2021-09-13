@@ -100,22 +100,23 @@ export default function Home() {
             <div key={entry.id}>
               <div className="headerList">
                 <ListName name={entry.list.title} people={entry.list.users} />
-
-                <NumberOfItems
-                  current={
-                    entry.list.items.filter((item) => item.completed).length
-                  }
-                  total={entry.list.items.length}
-                />
-                <Totals
-                  total={entry.list.items.reduce(
-                    (sum, item) => sum + item.price,
-                    0
-                  )}
-                  current={entry.list.items
-                    .filter((item) => item.completed)
-                    .reduce((sum, item) => sum + item.price, 0)}
-                />
+                <div className="col">
+                  <NumberOfItems
+                    current={
+                      entry.list.items.filter((item) => item.completed).length
+                    }
+                    total={entry.list.items.length}
+                  />
+                  <Totals
+                    total={entry.list.items.reduce(
+                      (sum, item) => sum + item.price,
+                      0
+                    )}
+                    current={entry.list.items
+                      .filter((item) => item.completed)
+                      .reduce((sum, item) => sum + item.price, 0)}
+                  />
+                </div>
               </div>
 
               {entry.list.items.map((item: IItemDetails) => {

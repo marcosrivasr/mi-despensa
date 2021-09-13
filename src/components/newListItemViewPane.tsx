@@ -78,34 +78,6 @@ export default function NewListItemViewPane({
     } catch (error) {
       console.error(error);
     }
-    /* const productid = uuidv4();
-    const startdate = Date.now();
-    const updatedItem: IItemDetails = {
-      productid,
-      title,
-      price,
-      day,
-      frequency,
-      startdate,
-      completed: false,
-      timestamp: Date.now(),
-    };
-
-    try {
-      const listItems = list.items;
-      listItems.push(updatedItem);
-
-      console.log(list);
-
-      const response = await db
-        .collection("shopping_lists")
-        .doc(list.id)
-        .update(list);
-
-      setShow(false);
-    } catch (error) {
-      console.error(error);
-    } */
   }
 
   function handleShow() {

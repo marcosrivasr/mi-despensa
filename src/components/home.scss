@@ -5,23 +5,52 @@
   margin: 60px 0 20px 0;
 
   .listDetails {
-    width: 33%;
+    width: 50%;
     h3 {
       margin: 0;
       font-size: 24px;
     }
   }
+  .col {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  .numberOfItems {
-    width: 33%;
-  }
+    .numberOfItems {
+      width: 33%;
+    }
 
-  .current {
-    font-weight: bold;
+    .current {
+      font-weight: bold;
+    }
   }
 
   .total {
     font-size: 14px;
     font-weight: lighter;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .headerList {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: center;
+
+    .col {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+
+      .numberOfItems,
+      .totals {
+        width: 100%;
+      }
+    }
+    .listDetails {
+      width: 100%;
+    }
   }
 }

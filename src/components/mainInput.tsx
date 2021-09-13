@@ -77,7 +77,7 @@ export default function MainInput({ list, collectionId }) {
     },
     {
       id: "wednesday",
-      name: "Martes",
+      name: "Miércoles",
       value: "3",
       onClick: () => {
         console.log("Hola");
@@ -85,7 +85,7 @@ export default function MainInput({ list, collectionId }) {
     },
     {
       id: "thursday",
-      name: "Martes",
+      name: "Jueves",
       value: "4",
       onClick: () => {
         console.log("Hola");
@@ -93,7 +93,7 @@ export default function MainInput({ list, collectionId }) {
     },
     {
       id: "friday",
-      name: "Martes",
+      name: "Viernes",
       value: "5",
       onClick: () => {
         console.log("Hola");
@@ -101,7 +101,7 @@ export default function MainInput({ list, collectionId }) {
     },
     {
       id: "saturday",
-      name: "Martes",
+      name: "Sábado",
       value: "6",
       onClick: () => {
         console.log("Hola");
@@ -163,30 +163,29 @@ export default function MainInput({ list, collectionId }) {
           onChange={(e) => setTitle(e.target.value)}
           value={title}
         />
+        <div className="priceAndCommandButtonsContainer">
+          <div className="priceContainer">
+            <span>$</span>
+            <input
+              type="number"
+              className="price"
+              placeholder="0.00"
+              onChange={(e) => setPrice(parseInt(e.target.value))}
+              value={price}
+            />
+          </div>
 
-        <div className="priceContainer">
-          <span>$</span>
-          <input
-            type="number"
-            className="price"
-            placeholder="0.00"
-            onChange={(e) => setPrice(parseInt(e.target.value))}
-            value={price}
+          <CommandButton
+            items={commandButtonsDay}
+            icon={faCalendarAlt}
+            onSelected={handleSelectedDay}
+          />
+          <CommandButton
+            items={commandButtonsFrequency}
+            icon={faClock}
+            onSelected={handleSelectedFrequency}
           />
         </div>
-
-        <CommandButton
-          items={commandButtonsDay}
-          icon={faCalendarAlt}
-          onSelected={handleSelectedDay}
-        />
-        <CommandButton
-          items={commandButtonsFrequency}
-          icon={faClock}
-          onSelected={handleSelectedFrequency}
-        />
-
-        <input type="submit" className="add" value="Añadir" hidden />
       </form>
     </div>
   );

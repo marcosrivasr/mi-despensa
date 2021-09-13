@@ -6,7 +6,10 @@
 
     .text {
       border-right: solid 1px #ccc;
-      width: 70%;
+    }
+
+    .priceAndCommandButtonsContainer {
+      display: flex;
     }
 
     .priceContainer {
@@ -32,10 +35,27 @@
 @media screen and (max-width: 700px) {
   .mainInput {
     form {
+      flex-direction: column;
       input,
       select {
         border: none;
+        padding: 10px;
+        font-size: 20px;
         width: 100%;
+      }
+      .price {
+        flex-grow: 1;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 701px) {
+  .mainInput {
+    form {
+      flex-direction: row;
+      .text {
+        width: 50%;
       }
     }
   }

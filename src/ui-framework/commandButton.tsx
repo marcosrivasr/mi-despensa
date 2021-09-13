@@ -20,9 +20,11 @@ export default function CommandButton({
 }: CommandButtonProps) {
   const [showMenu, setShowMenu] = useState(false);
   const [selected, setSelected] = useState(null);
+  const [bodyWidth, setBodyWidth] = useState(0);
   const ref = useRef(null);
 
   useEffect(() => {
+    setBodyWidth(document.body.getBoundingClientRect().width);
     return () => {
       window.removeEventListener("click", () => {});
     };
@@ -54,7 +56,19 @@ export default function CommandButton({
       </button>
       <div
         className="menu"
-        style={{ display: showMenu ? "block" : "none", position: "absolute" }}
+        style={{
+          display: showMenu ? "block" : "none",
+          position: "absolute",
+          left: ref.current
+            ? ref.current.getBoundingClientRect().x + 250 > bodyWidth
+              ? bodyWidth - 250 - 20
+              : ref.current.getBoundingClientRect().x
+            : "auto",
+          top: ref.current
+            ? ref.current.getBoundingClientRect().y +
+              ref.current.getBoundingClientRect().height
+            : "auto",
+        }}
       >
         {items.map((item) => (
           <a key={item.id} onClick={() => handleItemClick(item)}>

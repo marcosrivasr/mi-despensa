@@ -1,7 +1,9 @@
 .commandButton {
   display: flex;
   align-items: center;
+  width: 32px;
   button {
+    cursor: pointer;
     border: none;
     font-size: 20px;
     background: none;
@@ -10,6 +12,8 @@
 
 .menu {
   background-color: white;
+  border-radius: 4px;
+  overflow: hidden;
   width: 250px;
   border: solid 1px #ccc;
   box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.1);
@@ -19,7 +23,7 @@
   a {
     display: block;
     cursor: pointer;
-    padding: 5px;
+    padding: 10px;
     &:hover {
       background-color: #ccc;
     }

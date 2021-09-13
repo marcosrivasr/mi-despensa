@@ -186,6 +186,7 @@ export default function MainInput({ list, collectionId }) {
             onSelected={handleSelectedFrequency}
           />
         </div>
+        <input type="submit" value="Añadir" className="addButton" />
       </form>
     </div>
   );

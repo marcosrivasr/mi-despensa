@@ -14,3 +14,25 @@
     border-radius: 50%;
   }
 }
+
+@media screen and (max-width: 500px) {
+  .listView {
+    .listViewInfo {
+      flex-direction: column;
+      text-align: center;
+
+      .listTitle {
+        font-size: 30px;
+        margin: 10px;
+      }
+
+      .listCost {
+        font-size: 20px;
+      }
+    }
+
+    .peopleContainer {
+      justify-content: center;
+    }
+  }
+}

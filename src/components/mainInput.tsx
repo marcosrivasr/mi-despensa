@@ -159,7 +159,7 @@ export default function MainInput({
 
   return (
     <div className="mainInput">
-      <form onSubmit={handleClickAddItem}>
+      <form onSubmit={handleClickAddItem} className="form">
         <input
           ref={ref.current}
           type="text"

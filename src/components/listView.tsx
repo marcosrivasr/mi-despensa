@@ -95,21 +95,6 @@ export default function ListView({ match, location, history }) {
         .update({ items: updatedList.items });
 
       setListDetails(updatedList);
-
-      /* const responseList = await firebase
-        .firestore()
-        .collection("shopping_lists")
-        .doc(id)
-        .get();
-
-      const updatedList = responseList
-        .data()
-        .items.filter((i: IItemDetails) => i.productid !== item.productid);
-      await firebase
-        .firestore()
-        .collection("shopping_lists")
-        .doc(list)
-        .update({ items: updatedList }); */
     } catch (error) {
       console.error(error);
     }
@@ -200,7 +185,7 @@ export default function ListView({ match, location, history }) {
   }
 
   return (
-    <div>
+    <div className="listView">
       <div>
         <PrimaryButton onClick={handleEditList} value="Editar lista" />
       </div>
@@ -211,7 +196,7 @@ export default function ListView({ match, location, history }) {
             {listDetails ? listDetails.title : ""}
             {listDetails ? listDetails.icon : ""}
           </h2>
-          <h2>
+          <h2 className="listCost">
             $
             {listDetails
               ? listDetails.items
@@ -220,7 +205,9 @@ export default function ListView({ match, location, history }) {
               : ""}
           </h2>
         </div>
-        {listDetails && currentUsername ? <People users={people} /> : ""}
+        <div className="peopleContainer">
+          {listDetails && currentUsername ? <People users={people} /> : ""}
+        </div>
 
         {listDetails ? showListItems() : ""}
       </div>

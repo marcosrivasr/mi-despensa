@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { CommandButtonItem } from "./ui-types";
-import { v4 as uuidv4 } from "uuid";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
@@ -53,7 +52,11 @@ export default function CommandButton({
     <div className="commandButton">
       <button type="button" onClick={handleClick} ref={ref}>
         <FontAwesomeIcon className="fontawesome-icon" icon={icon} />
-        {selected ? <span className="value">{selected.name}</span> : ""}
+        {selected ? (
+          <span className="value">{selected.name}</span>
+        ) : (
+          "Seleccionar"
+        )}
       </button>
       <div
         className="menu"

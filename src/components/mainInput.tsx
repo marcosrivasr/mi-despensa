@@ -1,14 +1,24 @@
 import { useRef, useState } from "react";
 import firebase from "firebase/app";
 import "firebase/firestore";
-import { IItemDetails } from "../types/dataState";
+import { IItemDetails, IListDetails } from "../types/dataState";
 import { v4 as uuidv4 } from "uuid";
 import { CommandButtonItem } from "../ui-framework/ui-types";
 import "./mainInput.scss";
 import CommandButton from "../ui-framework/commandButton";
 import { faCalendarAlt, faClock } from "@fortawesome/free-solid-svg-icons";
 
-export default function MainInput({ list, collectionId }) {
+interface MainInputProps {
+  list: IListDetails;
+  collectionId: string;
+  onUpdateList: (item: IItemDetails) => void;
+}
+
+export default function MainInput({
+  list,
+  collectionId,
+  onUpdateList,
+}: MainInputProps) {
   const [title, setTitle] = useState<string>("");
   const [price, setPrice] = useState<number>(0);
   const [day, setDay] = useState<number>(-1);
@@ -21,7 +31,9 @@ export default function MainInput({ list, collectionId }) {
 
   async function handleClickAddItem(e) {
     e.preventDefault();
+
     if (title === "" || day < 0 || frequency < 0) return;
+
     const productid = uuidv4();
     const startdate = Date.now();
     const updatedItem: IItemDetails = {
@@ -36,14 +48,7 @@ export default function MainInput({ list, collectionId }) {
     };
 
     try {
-      const listItems = list.items;
-      listItems.push(updatedItem);
-
-      const response = await db
-        .collection("shopping_lists")
-        .doc(collectionId)
-        .update(list);
-
+      onUpdateList(updatedItem);
       setTitle("");
     } catch (error) {
       console.error(error);
@@ -170,7 +175,7 @@ export default function MainInput({ list, collectionId }) {
               type="number"
               className="price"
               placeholder="0.00"
-              onChange={(e) => setPrice(parseInt(e.target.value))}
+              onChange={(e) => setPrice(parseFloat(e.target.value))}
               value={price}
             />
           </div>

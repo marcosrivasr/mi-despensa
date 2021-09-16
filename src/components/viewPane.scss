@@ -12,9 +12,32 @@
   .container {
     background-color: #fff;
     border-radius: 4px;
-    width: 700px;
-    height: 500px;
+    width: 450px;
+    min-height: 450px;
     padding: 10px 20px;
     box-sizing: border-box;
+
+    .titleBar {
+      display: flex;
+      justify-content: flex-end;
+
+      button {
+        padding: 10px;
+      }
+    }
+  }
+  .show {
+    animation-name: show;
+    animation-duration: 0.3s;
+    animation-timing-function: ease-in-out;
+  }
+}
+
+@keyframes show {
+  from {
+    transform: scale(0);
+  }
+  from {
+    transform: scale(1);
   }
 }

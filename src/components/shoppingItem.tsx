@@ -16,6 +16,7 @@ interface shoppingItemProps {
   mode: "active" | "read";
   entryId?: string;
   onEdit?: (id: string) => void;
+  onRemove?: (id: string) => void;
   onChanged?: (completed: boolean) => void;
 }
 export default function ShoppingItem({
@@ -24,6 +25,7 @@ export default function ShoppingItem({
   list,
   mode,
   onEdit,
+  onRemove,
   onChanged,
 }: shoppingItemProps) {
   const d = new Date(item.startdate);
@@ -33,24 +35,7 @@ export default function ShoppingItem({
   }
 
   async function handleRemoveClick() {
-    try {
-      const responseList = await firebase
-        .firestore()
-        .collection("shopping_lists")
-        .doc(list)
-        .get();
-
-      const updatedList = responseList
-        .data()
-        .items.filter((i: IItemDetails) => i.productid !== item.productid);
-      await firebase
-        .firestore()
-        .collection("shopping_lists")
-        .doc(list)
-        .update({ items: updatedList });
-    } catch (error) {
-      console.error(error);
-    }
+    onRemove(item.productid);
   }
 
   function handleEditClick() {

@@ -23,7 +23,6 @@ export default function ListView({ match, location, history }) {
   const listId = match.params.id;
 
   useEffect(() => {
-    console.log("aaaa");
     getCurrentUsername();
 
     async function getCurrentUsername() {
@@ -50,13 +49,16 @@ export default function ListView({ match, location, history }) {
     }
 
     async function getListDetails() {
-      db.collection("shopping_lists")
+      /* db.collection("shopping_lists")
         .doc(listId)
         .onSnapshot((doc) => {
-          console.log(doc.data());
           setListDetails(doc.data() as IListDetails);
           getPeopleInvited(doc.data() as IListDetails);
-        });
+        }); */
+
+      const response = await db.collection("shopping_lists").doc(listId).get();
+      setListDetails(response.data() as IListDetails);
+      getPeopleInvited(response.data() as IListDetails);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -66,12 +68,60 @@ export default function ListView({ match, location, history }) {
     setShowPane(true);
   }
 
+  async function handleUpdateList(updatedItem) {
+    const updatedList = { ...listDetails };
+    updatedList.items.push(updatedItem);
+
+    const response = await db
+      .collection("shopping_lists")
+      .doc(updatedList.id)
+      .update(updatedList);
+
+    setListDetails(updatedList);
+  }
+
+  async function handleRemoveItem(id: string) {
+    try {
+      debugger;
+      const updatedList = { ...listDetails };
+      updatedList.items = updatedList.items.filter(
+        (item) => item.productid !== id
+      );
+
+      await firebase
+        .firestore()
+        .collection("shopping_lists")
+        .doc(updatedList.id)
+        .update({ items: updatedList.items });
+
+      setListDetails(updatedList);
+
+      /* const responseList = await firebase
+        .firestore()
+        .collection("shopping_lists")
+        .doc(id)
+        .get();
+
+      const updatedList = responseList
+        .data()
+        .items.filter((i: IItemDetails) => i.productid !== item.productid);
+      await firebase
+        .firestore()
+        .collection("shopping_lists")
+        .doc(list)
+        .update({ items: updatedList }); */
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   function showListItems() {
     return (
       <>
         <MainInput
-          list={listDetails ? listDetails : {}}
+          list={listDetails ? listDetails : null}
           collectionId={listId}
+          onUpdateList={handleUpdateList}
         />
         {listDetails.items
           .sort((a, b) => a.startdate - b.startdate)
@@ -83,6 +133,7 @@ export default function ListView({ match, location, history }) {
               mode="read"
               list={listId}
               onEdit={handleEditItem}
+              onRemove={handleRemoveItem}
             />
           ))}
       </>
@@ -115,7 +166,6 @@ export default function ListView({ match, location, history }) {
       response.forEach((user) => {
         if (user.data()) {
           usersArr.push(user.data() as IUser);
-          console.log(user.data());
         }
       });
     } catch (error) {
@@ -164,7 +214,9 @@ export default function ListView({ match, location, history }) {
           <h2>
             $
             {listDetails
-              ? listDetails.items.reduce((acc, item) => acc + item.price, 0)
+              ? listDetails.items
+                  .reduce((acc, item) => acc + item.price, 0)
+                  .toFixed(2)
               : ""}
           </h2>
         </div>

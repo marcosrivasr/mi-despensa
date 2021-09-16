@@ -1,12 +1,19 @@
 .commandButton {
   display: flex;
   align-items: center;
-  width: 32px;
+  min-width: 32px;
   button {
     cursor: pointer;
     border: none;
     font-size: 20px;
     background: none;
+    display: flex;
+    align-items: center;
+
+    .value {
+      font-size: 14px;
+      padding: 0 5px;
+    }
   }
 }
 

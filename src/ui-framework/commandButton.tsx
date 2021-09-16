@@ -18,9 +18,9 @@ export default function CommandButton({
   icon,
   onSelected,
 }: CommandButtonProps) {
-  const [showMenu, setShowMenu] = useState(false);
-  const [selected, setSelected] = useState(null);
-  const [bodyWidth, setBodyWidth] = useState(0);
+  const [showMenu, setShowMenu] = useState<Boolean>(false);
+  const [selected, setSelected] = useState<CommandButtonItem>(null);
+  const [bodyWidth, setBodyWidth] = useState<number>(0);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -53,6 +53,7 @@ export default function CommandButton({
     <div className="commandButton">
       <button type="button" onClick={handleClick} ref={ref}>
         <FontAwesomeIcon className="fontawesome-icon" icon={icon} />
+        {selected ? <span className="value">{selected.name}</span> : ""}
       </button>
       <div
         className="menu"
@@ -70,7 +71,7 @@ export default function CommandButton({
             : "auto",
         }}
       >
-        {items.map((item) => (
+        {items.map((item: CommandButtonItem) => (
           <a key={item.id} onClick={() => handleItemClick(item)}>
             {item.name} {selected && selected.id === item.id && "selected"}
           </a>

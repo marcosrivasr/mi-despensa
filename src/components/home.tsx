@@ -9,6 +9,8 @@ import { IEntry } from "../types/dataState";
 import { Redirect } from "react-router";
 import { formatPrice } from "../util/string";
 
+import Loading from "../ui-framework/loading";
+
 import "./home.scss";
 
 export default function Home() {
@@ -88,54 +90,56 @@ export default function Home() {
     );
   }
 
-  if (logged === null) return <div>Loading...</div>;
+  if (logged === null) return <Loading />;
 
   if (logged === false) return <Redirect to="/login" />;
 
   return (
     <div>
       <h1>Home</h1>
-      {entries
-        ? entries.map((entry: IEntry) => (
-            <div key={entry.id}>
-              <div className="headerList">
-                <ListName name={entry.list.title} people={entry.list.users} />
-                <div className="col">
-                  <NumberOfItems
-                    current={
-                      entry.list.items.filter((item) => item.completed).length
-                    }
-                    total={entry.list.items.length}
-                  />
-                  <Totals
-                    total={entry.list.items.reduce(
-                      (sum, item) => sum + item.price,
-                      0
-                    )}
-                    current={entry.list.items
-                      .filter((item) => item.completed)
-                      .reduce((sum, item) => sum + item.price, 0)}
-                  />
-                </div>
+      {entries ? (
+        entries.map((entry: IEntry) => (
+          <div key={entry.id} className="listContainer">
+            <div className="headerList">
+              <ListName name={entry.list.title} people={entry.list.users} />
+              <div className="col">
+                <NumberOfItems
+                  current={
+                    entry.list.items.filter((item) => item.completed).length
+                  }
+                  total={entry.list.items.length}
+                />
+                <Totals
+                  total={entry.list.items.reduce(
+                    (sum, item) => sum + item.price,
+                    0
+                  )}
+                  current={entry.list.items
+                    .filter((item) => item.completed)
+                    .reduce((sum, item) => sum + item.price, 0)}
+                />
               </div>
-
-              {entry.list.items.map((item: IItemDetails) => {
-                return (
-                  <ShoppingItem
-                    key={item.productid}
-                    item={item}
-                    mode="active"
-                    list={entry.list.id}
-                    entryId={entry.id}
-                    onChanged={(state: boolean) =>
-                      handleCompleted(entry, entry.list, item, state)
-                    }
-                  />
-                );
-              })}
             </div>
-          ))
-        : ""}
+
+            {entry.list.items.map((item: IItemDetails) => {
+              return (
+                <ShoppingItem
+                  key={item.productid}
+                  item={item}
+                  mode="active"
+                  list={entry.list.id}
+                  entryId={entry.id}
+                  onChanged={(state: boolean) =>
+                    handleCompleted(entry, entry.list, item, state)
+                  }
+                />
+              );
+            })}
+          </div>
+        ))
+      ) : (
+        <Loading />
+      )}
     </div>
   );
 }
